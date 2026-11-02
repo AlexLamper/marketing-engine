@@ -1,0 +1,81 @@
+{
+  "id": "2026-w45-thu-story",
+  "kind": "reel-story",
+  "week": "2026-W45",
+  "slot": "2026-11-05T19:30:00+01:00",
+  "platforms": ["instagram", "facebook", "tiktok", "youtube"],
+  "caption": "Petrus zei drie keer nee, bij een kolenvuur in Jeruzalem. Aan het meer, bij een ander kolenvuur, vroeg Jezus hem drie keer: heb je Mij lief?\n\nHet Griekse woord voor zo'n vuur staat maar twee keer in het Nieuwe Testament. In Johannes 18 en in Johannes 21.\n\nLees Johannes 21 met uitleg naast de tekst in de BijbelStudie app. Download gratis.",
+  "hashtags": ["#petrus", "#johannes", "#bijbelverhaal", "#bijbelstudie", "#bijbel"],
+  "experiment": {
+    "hook": "waar-begin-je",
+    "topic": "thema",
+    "note": "Thema opnieuw beginnen na falen. Stem daniel in plaats van male: lessons.md zegt bij een mannelijke verteller eerst Daniel."
+  },
+  "basedOn": "Joh 18:12,18 (SV): Jezus gebonden, kolenvuur, het was koud. 18:17,25-27: drie keer 'Ik ben niet', de haan. 21:1-9: zee van Tiberias, Petrus en zes anderen, die nacht niets, Jezus op de oever, net vol, kolenvuur. 21:15-17: drie keer 'hebt gij Mij lief'. Gr. anthrakia alleen in 18:18 en 21:9.",
+  "subject": "Petrus hersteld aan het meer",
+  "style": "dark",
+  "music": "cinematic",
+  "voiceStyle": "rustig",
+  "captions": "block",
+  "endCard": {
+    "headline": "Lees Johannes 21 met uitleg.",
+    "button": "Download gratis"
+  },
+  "voice": "daniel",
+  "hook": "Waar begin je opnieuw na je grootste fout? Petrus begon bij een kolenvuur.",
+  "title": "Petrus en de twee vuren",
+  "scenes": [
+    {
+      "say": "Jezus is gevangengenomen. Petrus warmt zich die nacht bij een kolenvuur.",
+      "show": "map",
+      "places": ["jeruzalem"],
+      "ref": "Johannes 18:12-18",
+      "marks": [{ "icon": "vuur", "cue": "kolenvuur" }]
+    },
+    {
+      "say": "Drie keer vragen ze of hij bij Jezus hoort. Drie keer zegt hij nee.",
+      "show": "text",
+      "text": "Drie keer nee.",
+      "ref": "Johannes 18:17-27"
+    },
+    {
+      "say": "Na de opstanding gaat Petrus terug naar het meer van Galilea.",
+      "show": "map",
+      "places": ["jeruzalem", "meer-van-galilea"],
+      "travel": "lopen",
+      "ref": "Johannes 21:1"
+    },
+    {
+      "say": "Met zes andere discipelen gaat hij weer vissen. Die hele nacht vangen ze niets.",
+      "show": "map",
+      "places": ["meer-van-galilea"],
+      "ref": "Johannes 21:2-3",
+      "marks": [{ "icon": "schip", "cue": "vissen", "side": "s" }]
+    },
+    {
+      "say": "Bij zonsopgang staat Jezus op de oever. Op Zijn woord zit het net ineens vol.",
+      "show": "map",
+      "places": ["meer-van-galilea"],
+      "ref": "Johannes 21:4-6",
+      "marks": [{ "icon": "vis", "cue": "ineens", "side": "s" }]
+    },
+    {
+      "say": "Petrus springt in het water. Op het strand brandt een kolenvuur, net als die nacht.",
+      "show": "map",
+      "places": ["meer-van-galilea"],
+      "ref": "Johannes 21:7-9",
+      "marks": [{ "icon": "vuur", "cue": "kolenvuur" }]
+    },
+    {
+      "say": "Bij dat vuur vraagt Jezus hem drie keer of hij van Hem houdt. Drie keer zegt Petrus ja.",
+      "show": "verse",
+      "verse": "Johannes 21:16",
+      "ref": "Johannes 21:15-17"
+    },
+    {
+      "say": "Geen verwijt, maar een vraag. Lees het in Johannes eenentwintig, met uitleg, in de BijbelStudie app.",
+      "show": "text",
+      "text": "Geen verwijt, maar een vraag."
+    }
+  ]
+}
