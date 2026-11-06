@@ -1,0 +1,78 @@
+{
+  "id": "2026-w46-mon-story",
+  "kind": "reel-story",
+  "week": "2026-W46",
+  "slot": "2026-11-09T19:30:00+01:00",
+  "platforms": ["instagram", "facebook", "tiktok", "youtube"],
+  "caption": "Ezra had de koning gezegd dat de hand van God over iedereen is die Hem zoekt. Toen moest hij vier maanden reizen met een fortuin aan zilver en goud. Om soldaten vragen? Daar schaamde hij zich voor.\n\nLees Ezra 8:22 en 8:31 eens naast elkaar. Twee keer dezelfde woorden: de hand van onze God. Eerst als geloof, daarna als ervaring.\n\nLees Ezra 8 met uitleg naast de tekst in de BijbelStudie app. Download gratis.\n\nTip: geef een vriend een week Pro cadeau, via je eigen link in de app.",
+  "hashtags": ["#ezra", "#bijbelverhaal", "#oudetestament", "#bijbelstudie", "#bijbel"],
+  "experiment": {
+    "hook": "inzicht",
+    "topic": "persoon",
+    "note": "Stem daniel in plaats van male: lessons.md zegt bij een mannelijke verteller eerst Daniel (Alex vroeg bij Esau met male om een andere stem). Referral in de caption (eerste item van W46)."
+  },
+  "basedOn": "Ezra 7:6 schriftgeleerde in Babel; 7:9 vier maanden reis; 7:14-15 door de koning gezonden met zilver en goud; 8:21-23 vasten bij Ahava, schaamde zich om soldaten te vragen; 8:26 fortuin; 8:31 hand van God, gered van vijanden en hinderlagen; 8:32-34 gewogen in de tempel. Referral.",
+  "subject": "Ezra's reis naar Jeruzalem",
+  "style": "dark",
+  "music": "cinematic",
+  "voiceStyle": "rustig",
+  "captions": "block",
+  "endCard": {
+    "headline": "Lees Ezra 8 met uitleg.",
+    "button": "Download gratis"
+  },
+  "voice": "daniel",
+  "hook": "Vier maanden onderweg met een fortuin aan goud. En Ezra vroeg niet om soldaten.",
+  "title": "Ezra's reis naar Jeruzalem",
+  "scenes": [
+    {
+      "say": "Ezra is schriftgeleerde in Babel. De koning stuurt hem met zilver en goud naar Jeruzalem.",
+      "show": "map",
+      "places": ["babel"],
+      "ref": "Ezra 7:6-15",
+      "marks": [
+        { "icon": "rol", "cue": "schriftgeleerde" },
+        { "icon": "kroon", "cue": "koning" }
+      ]
+    },
+    {
+      "say": "Hij schaamt zich om soldaten te vragen. Hij had de koning gezegd dat God beschermt wie Hem zoekt.",
+      "show": "text",
+      "text": "Gods hand is over wie Hem zoekt.",
+      "ref": "Ezra 8:22"
+    },
+    {
+      "say": "Bij de rivier Ahava vasten en bidden ze om een veilige reis. En God verhoort hun gebed.",
+      "show": "verse",
+      "verse": "Ezra 8:23",
+      "ref": "Ezra 8:21-23"
+    },
+    {
+      "say": "Dan trekken ze weg, met hun kinderen en al het goud.",
+      "show": "map",
+      "places": ["babel", "jeruzalem"],
+      "travel": "lopen",
+      "ref": "Ezra 8:31"
+    },
+    {
+      "say": "Onderweg liggen vijanden op de loer. Maar God beschermt hen, de hele weg.",
+      "show": "verse",
+      "verse": "Ezra 8:31",
+      "ref": "Ezra 8:31"
+    },
+    {
+      "say": "Na vier maanden zijn ze in Jeruzalem. In de tempel wegen ze alles na.",
+      "show": "map",
+      "places": ["jeruzalem"],
+      "ref": "Ezra 8:32-34",
+      "marks": [
+        { "icon": "tempel", "cue": "tempel" }
+      ]
+    },
+    {
+      "say": "Wat Ezra de koning zei, bleek onderweg waar. Lees het in Ezra acht, met uitleg, in de BijbelStudie app.",
+      "show": "text",
+      "text": "Gods hand was over hen."
+    }
+  ]
+}
