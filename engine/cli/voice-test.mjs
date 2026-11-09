@@ -35,7 +35,7 @@ const ROUND1 = [
   ['v3-robust', 'eleven_v3', { stability: 1.0, similarity_boost: 0.8, use_speaker_boost: true }, 'den-genen'],
 ];
 
-export async function voiceTest(voiceKey = 'male', round = '2') {
+export async function voiceTest(voiceKey = 'male', round = '3') {   // round: the latest unless asked
   const VARIANTS = { 1: ROUND1, 2: ROUND2, 3: ROUND3 }[round] || ROUND3;
   const key = process.env.ELEVENLABS_API_KEY; if (!key) throw new Error('no ELEVENLABS_API_KEY');
   const voice = resolveVoice(voiceKey); const stamp = Date.now();
@@ -48,11 +48,6 @@ export async function voiceTest(voiceKey = 'male', round = '2') {
     if (!r.ok) { console.log(`${name}: ElevenLabs ${r.status} ${(await r.text()).slice(0, 200)}`); continue; }
     const audio = Buffer.from(await r.arrayBuffer()); const file = join(tmpdir(), `vt-${name}.mp3`); writeFileSync(file, audio);
     console.log(`${name}: ${await upload(file, `${project().id}/samples/voice-test/${stamp}-${name}.mp3`)}`);
-    try {
-      const fd = new FormData(); fd.append('model_id', 'scribe_v1'); fd.append('language_code', 'nld');
-      fd.append('file', new Blob([audio], { type: 'audio/mpeg' }), `${name}.mp3`);
-      const s = await fetch('https://api.elevenlabs.io/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': key }, body: fd });
-      console.log(`${name} heard: ${s.ok ? (await s.json()).text : `STT ${s.status} ${(await s.text()).slice(0, 120)}`}`);
-    } catch (e) { console.log(`${name} heard: STT failed ${e.message}`); }
+    // (speech-to-text: the studio key lacks that permission; transcribe the uploaded takes elsewhere)
   }
 }
