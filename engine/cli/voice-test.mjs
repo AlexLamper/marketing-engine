@@ -15,7 +15,15 @@ const Q = 'Als God alles al weet, waarom zou je dan nog bidden?';
 const ASK = 'Wanneer heb jij voor het laatst iets aan je Vader gevraagd?';
 const V = w => `Hoeveel te meer zal uw Vader, Die in de hemelen is, goede gaven geven ${w}, die ze van Hem bidden!`;
 const v2 = { stability: 0.55, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true };
-const VARIANTS = [
+const v3n = { stability: 0.5, similarity_boost: 0.8, use_speaker_boost: true };
+// Round 2 (only the two questions): audio tags and punctuation, since no model/setting rose by itself.
+const ROUND2 = [
+  ['v3-curious', 'eleven_v3', v3n, null, ['[curious] ' + Q, '[curious] ' + ASK]],
+  ['v3-wondering', 'eleven_v3', v3n, null, ['[wondering] ' + Q, '[wondering] ' + ASK]],
+  ['v3-qq', 'eleven_v3', v3n, null, [Q + '?', ASK + '?']],
+  ['v2-qq', 'eleven_multilingual_v2', v2, null, [Q + '?', ASK + '?']],
+];
+const ROUND1 = [
   ['v2-now', 'eleven_multilingual_v2', v2, 'dengenen'],
   ['v2-now-alias', 'eleven_multilingual_v2', v2, 'den-genen'],
   ['v2-loose', 'eleven_multilingual_v2', { stability: 0.35, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true }, 'den-genen'],
@@ -23,11 +31,12 @@ const VARIANTS = [
   ['v3-robust', 'eleven_v3', { stability: 1.0, similarity_boost: 0.8, use_speaker_boost: true }, 'den-genen'],
 ];
 
-export async function voiceTest(voiceKey = 'male') {
+export async function voiceTest(voiceKey = 'male', round = '2') {
+  const VARIANTS = round === '1' ? ROUND1 : ROUND2;
   const key = process.env.ELEVENLABS_API_KEY; if (!key) throw new Error('no ELEVENLABS_API_KEY');
   const voice = resolveVoice(voiceKey); const stamp = Date.now();
-  for (const [name, model, settings, word] of VARIANTS) {
-    const text = [Q, V(word), ASK].join('\n\n');
+  for (const [name, model, settings, word, lines] of VARIANTS) {
+    const text = (lines || [Q, V(word), ASK]).join('\n\n');
     const body = { text, model_id: model, voice_settings: settings, seed: 11 };
     if (!model.startsWith('eleven_multilingual_v2')) body.language_code = 'nl';
     const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice.id}?output_format=mp3_44100_128`, {
