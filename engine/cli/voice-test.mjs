@@ -23,6 +23,10 @@ const ROUND2 = [
   ['v3-qq', 'eleven_v3', v3n, null, [Q + '?', ASK + '?']],
   ['v2-qq', 'eleven_multilingual_v2', v2, null, [Q + '?', ASK + '?']],
 ];
+// Round 3: "goede gaven" was heard as "goede graven" in every multilingual_v2 take (9 Nov).
+const G = w => `Hoeveel te meer zal uw Vader goede ${w} geven.`;
+const ROUND3 = [['g-plain', 'gaven'], ['g-hyphen', 'ga-ven'], ['g-long', 'gaaven'], ['g-accent', 'gáven']]
+  .map(([n, w]) => [n, 'eleven_multilingual_v2', v2, null, [G(w)]]);
 const ROUND1 = [
   ['v2-now', 'eleven_multilingual_v2', v2, 'dengenen'],
   ['v2-now-alias', 'eleven_multilingual_v2', v2, 'den-genen'],
@@ -32,7 +36,7 @@ const ROUND1 = [
 ];
 
 export async function voiceTest(voiceKey = 'male', round = '2') {
-  const VARIANTS = round === '1' ? ROUND1 : ROUND2;
+  const VARIANTS = { 1: ROUND1, 2: ROUND2, 3: ROUND3 }[round] || ROUND3;
   const key = process.env.ELEVENLABS_API_KEY; if (!key) throw new Error('no ELEVENLABS_API_KEY');
   const voice = resolveVoice(voiceKey); const stamp = Date.now();
   for (const [name, model, settings, word, lines] of VARIANTS) {
