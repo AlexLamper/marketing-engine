@@ -56,7 +56,7 @@ const R = project().recipe || {};
 // story and a 44-character film. So a day plans only the reels its share of the voice budget pays in full
 // (REEL_CHARS each): the share of what is left until the reset, saved up over the days since the last
 // planned reel (at most 7). No reel paid for: that day has only the verse.
-const REEL_CHARS = 700, SAVE_DAYS = 7;
+const REEL_CHARS = 850, SAVE_DAYS = 7;   // 850: a 60-second reel-vraag (Alex, 9 Nov: about 60 s; 628 characters gave 43 s)
 const budget = await elevenlabsBudget();
 let reelsToday = R.reelsPerDay, voiceBudget = null;
 if (budget) {

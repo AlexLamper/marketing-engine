@@ -75,7 +75,7 @@ figure (narrate about them), no violence on screen (tell it, show the aftermath)
     red capitals), near the end of the explanation.
   - `ask`: a question back to the viewer ("Wanneer heb jij voor het laatst ..."), never a lecture.
   - Never draw God, Jesus or angels as a figure; a cross, light, a door or a heart can stand for them.
-  - About 60 s: everything spoken together under 900 characters (the validator checks). Not their scripts or
+  - About 60 s: write 780-880 spoken characters in all (628 gave only 43 s, 9 Nov); never over 900 (the validator checks). Not their scripts or
     questions word for word: our own questions, in Dutch, with the Statenvertaling.
 - **reel-3d** (`style3d` `stickman` or `getekend` only) - a Bible story as an animated 2D film (drawn by
   `templates/film2d.js`): `cast`, sets (`slaapkamer`, `woonkamer`, `zee`, `woestijn`, `stad`, `heuvels`,
