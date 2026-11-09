@@ -100,7 +100,7 @@ const VOICE_RETRIES = 2;
 /** Names with a tricky stress, as the voice should hear them: P/brand/pronunciation.json { words: { "Elia": "Elía" } }. */
 export const pronunciations = (p = project()) => { try { return JSON.parse(readFileSync(join(p.paths.brand, 'pronunciation.json'), 'utf8')).words || {}; } catch { return {}; } };
 /** What the voice hears for one line (the captions keep the written words: the number of words stays the same):
- *  names from the pronunciation list (Alex, 24 Oct: "Elia" with the stress on the i, every time), and every
+ *  names and old Statenvertaling words from the pronunciation list, questions with "??" so they rise (Alex, 24 Oct: "Elia" with the stress on the i, every time), and every
  *  line ends as a sentence - one ending in , ; : or nothing sounds as if more is coming. */
 export function speakable(text, words = {}) {
   let t = String(text).trim().split(/\s+/).map(tok => {
@@ -108,6 +108,10 @@ export function speakable(text, words = {}) {
     return m && words[m[2]] ? m[1] + words[m[2]] + m[3] : tok;
   }).join(' ');
   if (!/[.!?\u2026]["'\u201d\u2019)]*$/.test(t)) t = t.replace(/[\s,;:\u2013-]+$/, '') + '.';
+  // A question goes up at the end (Alex, 9 Nov: "the tone doesn't get up in the end, which sounds weird").
+  // Measured on the voice: with one "?" every model and setting fell at the end of a question; with "??"
+  // multilingual_v2 rises (to ~179 Hz where it fell to ~71). Only what the voice hears; the words stay the same.
+  t = t.replace(/(?<!\?)\?(?!\?)(?=["'\u201d\u2019)]*(\s|$))/g, '??');
   return t;
 }
 /** Silences in a take (start/end seconds): where each spoken line really ends. */
