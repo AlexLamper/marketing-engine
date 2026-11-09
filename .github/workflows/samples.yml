@@ -10,7 +10,7 @@ permissions: { contents: read, issues: write }
 defaults: { run: { shell: bash } }
 jobs:
   samples:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     env: { PROJECT: '${{ inputs.project }}' }
     steps:

@@ -7,7 +7,7 @@ permissions: { contents: read, issues: write }
 defaults: { run: { shell: bash } }   # bash -eo pipefail: a failing script fails the step despite | tee
 jobs:
   stats:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       SECRETS: ${{ toJSON(secrets) }}

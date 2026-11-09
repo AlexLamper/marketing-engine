@@ -14,7 +14,7 @@ permissions: { contents: write, issues: write, id-token: write, actions: write }
 defaults: { run: { shell: bash } }   # bash -eo pipefail: a failing script fails the step despite | tee
 jobs:
   projects:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs: { list: '${{ steps.p.outputs.list }}' }
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
     if: needs.projects.outputs.list != '[]'
     strategy: { matrix: { project: '${{ fromJSON(needs.projects.outputs.list) }}' }, fail-fast: false, max-parallel: 1 }
     concurrency: { group: 'planner-${{ matrix.project }}', cancel-in-progress: false }
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       PROJECT: ${{ matrix.project }}
