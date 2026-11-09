@@ -20,7 +20,7 @@ The planner plans one day per run (the day in `content/context/target-week.json`
 | What | Per day | Slot (label) | Platforms |
 |---|---|---|---|
 | `verse-still` daily verse | 1 (every day) | 07:00 | instagram, facebook (never tiktok/youtube) |
-| Story reels (`reel-story` or `reel-3d`) | at most 2 (`recipe.reelsPerDay`), as many as the voice budget pays in full (`allocation.json` `voiceBudget.reelsPaidFor`; Alex, 25 Oct: no extra voice credits) | label only | instagram, facebook, tiktok, youtube (always all four) |
+| Reels (`reel-story`, `reel-3d` or `reel-vraag`) | at most 2 (`recipe.reelsPerDay`), as many as the voice budget pays in full (`allocation.json` `voiceBudget.reelsPaidFor`; Alex, 25 Oct: no extra voice credits) | label only | instagram, facebook, tiktok, youtube (always all four) |
 
 No feed posts, no other formats. Alex approves onto a pile; one reel a day goes out at 19:30 on every
 platform (Alex, 25 Oct) and the verse at 07:00 (`engine/slots.mjs`), so the `slot` is only a label. Which of the two
@@ -61,6 +61,22 @@ figure (narrate about them), no violence on screen (tell it, show the aftermath)
     `timeline`, `tree`, `word` when they help. Never `photo` (Alex: a picture that suddenly appears breaks it).
   - 5-7 scenes, one spoken line each, 30-50 s. The map, the routes and the icons carry the story: every
     scene should show something new happening on the map.
+- **reel-vraag** - an honest question about God or faith, answered with one strong image (Alex, 9 Nov: "copy
+  these style videos" - the whywouldgod-style explainers he saved: they work). Drawn by `templates/vraag.js`:
+  cream ground, flat line drawings that draw themselves, one sentence at a time with one word in colour.
+  - `question`: the question as a real person asks it, word for word ("Als God liefde is, waarom ..."); `key`
+    = the word in colour. It is the hook and the title. `draw` = the picture under it (1-3 props).
+  - The answer is ONE image or comparison that makes it click (a father and his child, a judge who pays the
+    fine himself, a lamp in the dark), told in 3-6 `scenes`: `say` (spoken), `show` (shorter screen line when
+    `say` is long), `key` (one word in colour), `draw` (1-4 props: `p` from VRAAG_PROPS in engine/spec.mjs,
+    `at` links/midden/rechts/boven, `pose` for persoon/kind, `label` like "DE VADER", `big`). Leave `draw` out
+    to keep the previous picture while the thought goes on.
+  - Exactly one `verse` scene (SV; `say` is then exactly that verse's text, `verseKeys` = 1-3 of its words in
+    red capitals), near the end of the explanation.
+  - `ask`: a question back to the viewer ("Wanneer heb jij voor het laatst ..."), never a lecture.
+  - Never draw God, Jesus or angels as a figure; a cross, light, a door or a heart can stand for them.
+  - About 60 s: everything spoken together under 900 characters (the validator checks). Not their scripts or
+    questions word for word: our own questions, in Dutch, with the Statenvertaling.
 - **reel-3d** (`style3d` `stickman` or `getekend` only) - a Bible story as an animated 2D film (drawn by
   `templates/film2d.js`): `cast`, sets (`slaapkamer`, `woonkamer`, `zee`, `woestijn`, `stad`, `heuvels`,
   `kaart` = the map with a route), shot by shot. Each shot is ONE narrator line (`say`) or a silent `hold`

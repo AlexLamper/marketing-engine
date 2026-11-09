@@ -15,7 +15,7 @@
 import { HOOKS, TOPICS, STYLES, STYLES3D, MOODS, CAPTIONS, VOICE_STYLES, REEL_KINDS, VOICE_REQUIRED, RENDERABLE, isVideo } from './spec.mjs';
 
 export const POST_KINDS = ['post-spotlight', 'post-statement', 'carousel'];
-export const DEFAULT_STYLE = { 'reel-explainer': 'light', 'reel-demo': 'light', 'reel-verse': 'photo', 'reel-kinetic': 'dark', 'reel-quiz': 'light', 'reel-list': 'light', 'reel-story': 'dark', carousel: 'light' };
+export const DEFAULT_STYLE = { 'reel-explainer': 'light', 'reel-demo': 'light', 'reel-verse': 'photo', 'reel-kinetic': 'dark', 'reel-quiz': 'light', 'reel-list': 'light', 'reel-story': 'dark', 'reel-vraag': 'light', carousel: 'light' };
 const hasVoice = s => !!s.voice && s.voice !== 'none';
 const bucket = d => d < 15 ? '<15s' : d < 30 ? '15-30s' : d < 45 ? '30-45s' : '45s+';
 const localTime = (iso, tz = 'Europe/Amsterdam') => new Intl.DateTimeFormat('nl-NL', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date(iso));
@@ -43,6 +43,7 @@ export function spokenText(s) {
   switch (s.kind) {
     case 'reel-explainer': return [s.hook, ...s.lines.map(l => l.say)].join(' ');
     case 'reel-story': return [s.hook, ...s.scenes.map(l => l.say)].join(' ');
+    case 'reel-vraag': return [s.question, ...s.scenes.map(l => l.say), s.ask].join(' ');
     case 'reel-kinetic': return [s.hook, ...s.lines.map(l => l.text)].join(' ');
     case 'reel-list': return [s.hook, ...s.items.map(i => i.say || [i.title, i.text].filter(Boolean).join('. '))].join(' ');
     case 'reel-quiz': return [s.question, `Het antwoord is X: ${s.options[s.answer]}.`, s.explain].join(' ');

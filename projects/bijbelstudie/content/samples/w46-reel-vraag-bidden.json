@@ -1,0 +1,134 @@
+{
+  "id": "w46-reel-vraag-bidden",
+  "kind": "reel-vraag",
+  "week": "2026-W46",
+  "slot": "2026-11-12T19:30:00+01:00",
+  "platforms": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube"
+  ],
+  "caption": "Als God alles al weet, waarom zou je dan nog bidden? Jezus gaf er zelf een beeld bij: een kind dat zijn vader om brood vraagt. Lees Mattheüs 7 met uitleg in de BijbelStudie app.",
+  "hashtags": [
+    "#bidden",
+    "#gebed",
+    "#bijbel",
+    "#bijbelstudie"
+  ],
+  "voice": "male",
+  "music": "reflective",
+  "captions": "none",
+  "subject": "Waarom bidden als God alles weet",
+  "basedOn": "Mattheüs 6:8 (de Vader weet wat gij van node hebt) en Mattheüs 7:9-11 (een vader geeft zijn kind brood)",
+  "experiment": {
+    "hook": "vraag",
+    "topic": "thema"
+  },
+  "question": "Als God alles al weet, waarom zou je dan nog bidden?",
+  "key": "bidden",
+  "draw": [
+    {
+      "p": "persoon",
+      "pose": "verdrietig",
+      "at": "midden"
+    },
+    {
+      "p": "vraagteken",
+      "at": "boven"
+    }
+  ],
+  "scenes": [
+    {
+      "say": "Jezus zegt het zelf: je Vader weet wat je nodig hebt, nog voordat je het vraagt.",
+      "show": "Je Vader weet wat je nodig hebt, voordat je het vraagt.",
+      "key": "weet",
+      "draw": [
+        {
+          "p": "persoon",
+          "at": "links"
+        },
+        {
+          "p": "zon",
+          "at": "boven"
+        },
+        {
+          "p": "persoon",
+          "at": "rechts",
+          "pose": "armen-open",
+          "label": "de vader"
+        }
+      ]
+    },
+    {
+      "say": "Denk aan een kind dat zijn vader om brood vraagt. De vader wist allang dat het honger had.",
+      "show": "Een kind vraagt zijn vader om brood.",
+      "key": "brood",
+      "draw": [
+        {
+          "p": "kind",
+          "at": "links",
+          "pose": "wijzen"
+        },
+        {
+          "p": "brood",
+          "at": "midden"
+        },
+        {
+          "p": "persoon",
+          "at": "rechts",
+          "label": "de vader"
+        }
+      ]
+    },
+    {
+      "say": "Toch wil hij dat zijn kind komt. Niet om informatie, maar omdat hij zijn kind dichtbij wil hebben.",
+      "show": "Niet om informatie. Hij wil zijn kind dichtbij.",
+      "key": "dichtbij",
+      "draw": [
+        {
+          "p": "kind",
+          "at": "midden",
+          "pose": "armen-open"
+        },
+        {
+          "p": "persoon",
+          "at": "midden",
+          "pose": "armen-open"
+        },
+        {
+          "p": "hart",
+          "at": "boven"
+        }
+      ]
+    },
+    {
+      "say": "Indien dan gij, die boos zijt, weet uw kinderen goede gaven te geven, hoeveel te meer zal uw Vader, Die in de hemelen is, goede gaven geven dengenen, die ze van Hem bidden!",
+      "verse": "Mattheüs 7:11",
+      "verseKeys": [
+        "vader",
+        "bidden"
+      ]
+    },
+    {
+      "say": "Bidden is dus geen uitleg geven aan God. Het is naar je Vader toe gaan.",
+      "key": "Vader",
+      "draw": [
+        {
+          "p": "weg",
+          "at": "midden"
+        },
+        {
+          "p": "persoon",
+          "at": "links",
+          "pose": "lopen"
+        },
+        {
+          "p": "huis",
+          "at": "rechts"
+        }
+      ]
+    }
+  ],
+  "ask": "Wanneer heb jij voor het laatst iets aan je Vader gevraagd?"
+}

@@ -71,6 +71,10 @@
       "reel-story": [
         3,
         1
+      ],
+      "reel-vraag": [
+        4,
+        1
       ]
     }
   },
@@ -90,7 +94,8 @@
   "_voicesNote": "Alex 24 Oct 2026: one or two calm voices per video (the two default voices, steady style), calm music only - no upbeat/happy tracks. Daniel (test set, Daniel Wichers) added on Alex's request for Saulus.",
   "formatsAllowed": [
     "reel-story",
-    "reel-3d"
+    "reel-3d",
+    "reel-vraag"
   ],
   "postFormatsAllowed": [],
   "stylesAllowed": [

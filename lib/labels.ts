@@ -16,7 +16,7 @@ export const statusLabel = (s: string) => STATUS[s]?.label ?? s;
 export const KIND: Record<string, string> = {
   'verse-still': 'Vers van de dag', 'reel-verse': 'Reel - vers', 'reel-demo': 'Reel - app demo',
   'reel-explainer': 'Reel - uitleg', 'reel-kinetic': 'Reel - bewegende tekst', 'reel-quiz': 'Reel - quiz',
-  'reel-list': 'Reel - lijstje', 'reel-story': 'Reel - verhaal met kaart', 'reel-3d': 'Reel - 3D-film', 'post-spotlight': 'Post - functie',
+  'reel-list': 'Reel - lijstje', 'reel-story': 'Reel - verhaal met kaart', 'reel-3d': 'Reel - 3D-film', 'reel-vraag': 'Reel - eerlijke vraag', 'post-spotlight': 'Post - functie',
   'post-statement': 'Post - statement', carousel: 'Carrousel',
 };
 

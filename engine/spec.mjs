@@ -246,6 +246,47 @@ export const ReelScene = z.object({
   if (Math.abs(s.shots.reduce((n, sh) => n + (sh.say || sh.line || '').length, 0)) > 1100) c.addIssue({ code: 'custom', message: 'too much text for one reel - keep all lines together under 1100 characters (about 60 s)', path: ['shots'] });
 });
 
+// An honest question, answered with one image (Alex, 9 Nov: "copy these style videos" - whywouldgod and the
+// like): flat line drawings on cream, one sentence at a time with one word in colour, a verse card, and a
+// question back to the viewer. templates/vraag.js. Props: VRAAG_PROPS.
+export const VRAAG_PROPS = ['persoon', 'kind', 'rechter', 'hart', 'gebroken-hart', 'zon', 'wolk', 'regen', 'weegschaal', 'hamer', 'vonnis',
+  'kruis', 'graf', 'bijbel', 'lamp', 'ster', 'telescoop', 'huis', 'deur', 'boom', 'berg', 'weg', 'ketting', 'schaap', 'brood', 'beker', 'sleutel', 'vraagteken', 'geschenk', 'klok'];
+export const VRAAG_POSES = ['staan', 'wijzen', 'knielen', 'armen-open', 'verdrietig', 'lopen', 'omhoog'];
+const vraagDraw = z.object({
+  p: z.enum(VRAAG_PROPS),                                  // what to draw
+  at: z.enum(['links', 'midden', 'rechts', 'boven']).default('midden'),
+  pose: z.enum(VRAAG_POSES).optional(),                    // persoon / kind only
+  label: z.string().max(28).optional(),                    // small chip with a line, e.g. "DE RECHTER" (shown in capitals)
+  big: z.boolean().optional(),                             // the one thing the scene is about, drawn larger
+});
+const keyIn = (text, key) => !key || text.toLowerCase().includes(key.toLowerCase());
+export const ReelVraag = z.object({
+  ...base, ...reel, kind: z.literal('reel-vraag'),
+  voice,
+  question: said(10, 90),                                  // the honest question, spoken first and the title
+  key: z.string().max(30),                                 // the word(s) of the question in colour, e.g. "hel"
+  series: z.string().max(24).optional(),                   // small chip top left; left out = "EERLIJKE VRAGEN"
+  draw: z.array(vraagDraw).max(3).default([]),             // the picture under the question
+  scenes: z.array(z.object({
+    say: said(8, 200),                                     // spoken; also the line on screen unless show is given
+    show: said(4, 110).optional(),                         // a shorter line for the screen
+    key: z.string().max(30).optional(),                    // the word(s) of the line in colour
+    draw: z.array(vraagDraw).max(4).optional(),            // the picture (left out: the previous one stays)
+    verse: ref.optional(),                                 // a verse card instead of a picture (exact SV text)
+    verseKeys: z.array(z.string().max(24)).max(3).optional(),  // words of the verse in red capitals
+  })).min(3).max(9),
+  ask: said(10, 120),                                      // the question back to the viewer, the last line
+}).superRefine((s, c) => {
+  if (!keyIn(s.question, s.key)) c.addIssue({ code: 'custom', message: `key "${s.key}" is not in the question`, path: ['key'] });
+  s.scenes.forEach((x, i) => {
+    if (x.key && !keyIn(x.show || x.say, x.key)) c.addIssue({ code: 'custom', message: `key "${x.key}" is not in the line`, path: ['scenes', i, 'key'] });
+    if (x.verse && x.draw) c.addIssue({ code: 'custom', message: 'a scene has a verse or a drawing, not both', path: ['scenes', i] });
+  });
+  if (!s.draw.length && !s.scenes[0].draw) c.addIssue({ code: 'custom', message: 'give the question or the first scene a drawing', path: ['draw'] });
+  const total = [s.question, ...s.scenes.map(x => x.say), s.ask].join(' ').length;
+  if (total > 900) c.addIssue({ code: 'custom', message: `${total} spoken characters - keep it under 900 (about 60 s)`, path: ['scenes'] });
+});
+
 export const PostSpotlight = z.object({
   ...base, kind: z.literal('post-spotlight'),
   screenshot, headline: shortLine, sub: z.string().max(120),
@@ -272,13 +313,13 @@ export const Carousel = z.object({
 }).refine(s => s.slides[0].type === 'cover', { message: 'the first slide must be type "cover" (the hook)', path: ['slides', 0] })
   .refine(s => s.platforms.every(p => p === 'instagram' || p === 'facebook'), { message: 'carousels go to instagram and facebook only', path: ['platforms'] });
 
-export const Spec = z.union([VerseStill, ReelVerse, ReelDemo, ReelExplainer, ReelKinetic, ReelQuiz, ReelList, ReelStory, ReelScene, PostSpotlight, PostStatement, Carousel]);
+export const Spec = z.union([VerseStill, ReelVerse, ReelDemo, ReelExplainer, ReelKinetic, ReelQuiz, ReelList, ReelStory, ReelScene, ReelVraag, PostSpotlight, PostStatement, Carousel]);
 const SCHEMAS = { 'verse-still': VerseStill, 'reel-verse': ReelVerse, 'reel-demo': ReelDemo, 'reel-explainer': ReelExplainer, 'reel-kinetic': ReelKinetic,
-  'reel-quiz': ReelQuiz, 'reel-list': ReelList, 'reel-story': ReelStory, 'reel-3d': ReelScene, 'post-spotlight': PostSpotlight, 'post-statement': PostStatement, carousel: Carousel };
+  'reel-quiz': ReelQuiz, 'reel-list': ReelList, 'reel-story': ReelStory, 'reel-3d': ReelScene, 'reel-vraag': ReelVraag, 'post-spotlight': PostSpotlight, 'post-statement': PostStatement, carousel: Carousel };
 export const KINDS = Object.keys(SCHEMAS);
 export const REEL_KINDS = KINDS.filter(k => k.startsWith('reel-'));
 export const isVideo = kind => kind.startsWith('reel-');
-export const VOICE_REQUIRED = ['reel-explainer', 'reel-story'];
+export const VOICE_REQUIRED = ['reel-explainer', 'reel-story', 'reel-vraag'];
 /** Kinds that have a template (engine/render/templates/*.js register T['kind']). */
 const TEMPLATES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'render', 'templates');
 export const RENDERABLE = existsSync(TEMPLATES_DIR) ? [...new Set(readdirSync(TEMPLATES_DIR).filter(f => f.endsWith('.js'))
