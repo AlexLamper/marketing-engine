@@ -152,7 +152,7 @@
     const verses = segs.map((s, i) => {
       const sc = spec.scenes[i - 1];
       if (!sc?.verse || !sc.verseData) return null;
-      const card = el('div', 'abs full', root); css(card, { background: is3d ? 'rgba(22,12,10,.78)' : C.cream, opacity: 0 });
+      const card = el('div', 'abs full', root); css(card, { background: is3d ? (spec.sfeer === 'nacht' ? 'rgba(8,12,28,.8)' : 'rgba(22,12,10,.78)') : C.cream, opacity: 0 });
       const keys = (sc.verseKeys || []).map(k => k.toLowerCase());
       const txt = sc.verseData.text;
       const html = esc(`"${txt}"`).split(/(\s+)/).map(w => { const bare = w.toLowerCase().replace(/[^\p{L}\p{N}-]/gu, ''); return bare && keys.includes(bare) ? `<b style="font-style:normal;font-family:Inter;font-weight:700;font-size:.82em;letter-spacing:2px;color:${is3d ? C.gold : C.terra}">${w.toUpperCase()}</b>` : w; }).join('');
