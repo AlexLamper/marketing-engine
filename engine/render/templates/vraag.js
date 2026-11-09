@@ -94,15 +94,21 @@
   }
 
   T['reel-vraag'] = (spec, timing) => {
+    const is3d = spec.look === '3d';                                     // style B: templates/vraag3d.js draws the picture
+    const INK = is3d ? '#fff' : C.ink, SHADOW = is3d ? '0 2px 22px rgba(0,0,0,.45)' : 'none';
     stage.style.background = C.cream;
     const style = el('style', '', stage); style.textContent = `.vq .d{stroke:${C.ink};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;fill-opacity:0}.vq .d:not(.f){fill:none}`;
     const root = el('div', 'abs full vq');
     // warm halo behind the picture and a fine paper vignette
     const halo = el('div', 'abs', root); css(halo, { left: '90px', top: '420px', width: '900px', height: '900px', borderRadius: '50%', background: `radial-gradient(closest-side, ${C.goldSoft}, rgba(244,220,166,0))`, opacity: .0 });
-    el('div', 'abs full', root).style.background = 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(120,90,50,.10) 100%)';
+    const vig = el('div', 'abs full', root); vig.style.background = is3d ? 'radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 50%, rgba(10,4,2,.38) 100%)' : 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(120,90,50,.10) 100%)';
+    if (is3d) root.style.zIndex = '1';   // above the 3D canvas
+    if (is3d) el('div', 'abs full', root).style.background = 'linear-gradient(to bottom, rgba(12,5,3,0) 58%, rgba(12,5,3,.34) 64%, rgba(12,5,3,.34) 76%, rgba(12,5,3,0) 84%)';   // reads over the scenery
+    if (is3d) halo.style.display = 'none';
     const ground = el('div', 'abs', root); css(ground, { left: '130px', top: GROUND + 'px', width: '820px', height: '4px', borderRadius: '2px', background: C.ink, transformOrigin: 'left center' });
     const chip = el('div', 'abs', root, `<span style="color:${C.gold}">?</span>&nbsp;&nbsp;${esc((spec.series || 'Eerlijke vragen').toUpperCase())}`);
-    css(chip, { left: '56px', top: (WM.top + 4) + 'px', font: '700 24px Inter', letterSpacing: '4px', color: C.ink, opacity: 0 });
+    css(chip, { left: '56px', top: (WM.top + 4) + 'px', font: '700 24px Inter', letterSpacing: '4px', color: INK, textShadow: SHADOW, opacity: 0 });
+    if (is3d) ground.style.display = 'none';
 
     const units = T['reel-vraag'].units(spec);
     const segs = layout(units, timing);
@@ -114,14 +120,15 @@
     const drawOf = [0]; let cur = 0;
     spec.scenes.forEach(s => { if (s.draw?.length) { sources.push(s.draw); cur = sources.length - 1; } drawOf.push(cur); });
     drawOf.push(cur);                                                     // the ask keeps the last picture
-    const drawings = sources.map(list => drawing(list, root));
+    const drawings = is3d ? [] : sources.map(list => drawing(list, root));
+    const pic = is3d ? window.VRAAG3D(spec, sources, root, timing) : null;
     const firstSeg = drawOf.map((d, i) => i).reduce((m, i) => (m[drawOf[i]] ??= i, m), {});
 
     // the question (title) at the top
     const qBox = el('div', 'abs serif', root);
     const keyRe = k => new RegExp(`(${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'i');
     qBox.innerHTML = esc(spec.question).replace(keyRe(spec.key), `<span style="color:${C.gold}">$1</span>`);
-    css(qBox, { left: '90px', width: '900px', top: TEXT_TOP + 'px', textAlign: 'center', fontWeight: 700, fontSize: fit(spec.question, [[40, 84], [60, 74], [999, 64]], 900) + 'px', lineHeight: 1.12, letterSpacing: '-1px', color: C.ink, opacity: 0 });
+    css(qBox, { left: '90px', width: '900px', top: TEXT_TOP + 'px', textAlign: 'center', fontWeight: 700, fontSize: fit(spec.question, [[40, 84], [60, 74], [999, 64]], 900) + 'px', lineHeight: 1.12, letterSpacing: '-1px', color: INK, textShadow: SHADOW, opacity: 0 });
 
     // the sentence under the picture: words light up as they are spoken, one word in colour
     const lines = segs.map((s, i) => {
@@ -130,11 +137,11 @@
       if (sc?.verse) return null;
       const text = i <= spec.scenes.length ? (sc.show || sc.say) : spec.ask;
       const key = i <= spec.scenes.length ? sc.key : null;
-      const box = el('div', 'abs', root); css(box, { left: '90px', width: '900px', top: TEXT_Y + 'px', textAlign: 'center', fontWeight: 700, fontSize: fit(text, [[40, 66], [70, 58], [999, 52]], 900) + 'px', lineHeight: 1.18, letterSpacing: '-.8px', color: C.ink, opacity: 0 });
+      const box = el('div', 'abs', root); css(box, { left: '90px', width: '900px', top: TEXT_Y + 'px', textAlign: 'center', fontWeight: 700, fontSize: fit(text, [[40, 66], [70, 58], [999, 52]], 900) + 'px', lineHeight: 1.18, letterSpacing: '-.8px', color: INK, textShadow: SHADOW, opacity: 0 });
       const words = text.split(/\s+/).filter(Boolean);
       const keyWords = key ? key.toLowerCase().split(/\s+/) : [];
       const spans = words.map(w => { const bare = w.toLowerCase().replace(/[^\p{L}\p{N}-]/gu, ''); const hit = keyWords.includes(bare);
-        const sp = el('span', '', box, esc(w) + ' '); if (hit) sp.style.color = C.terra; return sp; });
+        const sp = el('span', '', box, esc(w) + ' '); if (hit) sp.style.color = is3d ? C.gold : C.terra; return sp; });
       // times: the spoken words when the screen line is the spoken line, else spread over the segment
       const wt = wordTimes(sc?.show && sc.show !== sc.say ? { ...s, words: null, text } : s);
       const at = spans.map((_, j) => (wt[Math.min(j, wt.length - 1)] || { a: s.start }).a);
@@ -145,29 +152,30 @@
     const verses = segs.map((s, i) => {
       const sc = spec.scenes[i - 1];
       if (!sc?.verse || !sc.verseData) return null;
-      const card = el('div', 'abs full', root); css(card, { background: C.cream, opacity: 0 });
+      const card = el('div', 'abs full', root); css(card, { background: is3d ? 'rgba(22,12,10,.78)' : C.cream, opacity: 0 });
       const keys = (sc.verseKeys || []).map(k => k.toLowerCase());
       const txt = sc.verseData.text;
-      const html = esc(`"${txt}"`).split(/(\s+)/).map(w => { const bare = w.toLowerCase().replace(/[^\p{L}\p{N}-]/gu, ''); return bare && keys.includes(bare) ? `<b style="font-style:normal;font-family:Inter;font-weight:700;font-size:.82em;letter-spacing:2px;color:${C.terra}">${w.toUpperCase()}</b>` : w; }).join('');
+      const html = esc(`"${txt}"`).split(/(\s+)/).map(w => { const bare = w.toLowerCase().replace(/[^\p{L}\p{N}-]/gu, ''); return bare && keys.includes(bare) ? `<b style="font-style:normal;font-family:Inter;font-weight:700;font-size:.82em;letter-spacing:2px;color:${is3d ? C.gold : C.terra}">${w.toUpperCase()}</b>` : w; }).join('');
       const holder = el('div', '', card); css(holder, { position: 'absolute', left: '110px', width: '860px', top: '0', height: '1500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '56px' });
       const q = el('div', 'serif', holder, html);
-      css(q, { textAlign: 'center', fontStyle: 'italic', fontSize: fit(txt, [[90, 62], [160, 54], [260, 48], [999, 42]], 860) + 'px', lineHeight: 1.42, color: C.ink });
+      css(q, { textAlign: 'center', fontStyle: 'italic', fontSize: fit(txt, [[90, 62], [160, 54], [260, 48], [999, 42]], 860) + 'px', lineHeight: 1.42, color: INK });
       const r = el('div', '', holder, vref(sc.verseData.ref).replace(/ SV$/, ' · SV'));
-      css(r, { textAlign: 'center', font: '700 26px Inter', letterSpacing: '4px', color: C.terra });
+      css(r, { textAlign: 'center', font: '700 26px Inter', letterSpacing: '4px', color: is3d ? C.gold : C.terra });
       return { card, q, r };
     });
 
     // watermark on a light ground: the full-colour logo, small and calm in the top right (WM spot)
+    const wmDark = is3d ? watermark(5) : null;   // dark ground: the outlined mark + white wordmark
     const wmBox = el('div', 'abs', stage); css(wmBox, { top: WM.top + 'px', right: WM.right + 'px', height: WM.h + 'px', zIndex: 5, opacity: 0 });
     img(ctx.logos.full, '', wmBox).style.height = WM.h + 'px';
-    const wm = (t, endStart) => { wmBox.style.opacity = (.75 * out(prog(t, 0, .4)) * (1 - prog(t, endStart - .1, endStart + .2))).toFixed(3); };
+    const wm = wmDark || ((t, endStart) => { wmBox.style.opacity = (.75 * out(prog(t, 0, .4)) * (1 - prog(t, endStart - .1, endStart + .2))).toFixed(3); });
     const end = endCard(spec);
     const k = (t, a, d = .45) => out(prog(t, a, a + d));
 
-    return { width: W, height: H, duration, starts: segs.map(s => s.start), render(t) {
+    return { width: W, height: H, duration, ...(is3d ? { fps: 24, ready: pic.ready } : {}), starts: segs.map(s => s.start), render(t) {
       const segAt = segs.findIndex((s, i) => t < (segs[i + 1]?.start ?? 1e9) - .2);
       const i = segAt < 0 ? segs.length - 1 : segAt;
-      set(chip, k(t, .1) * .85);
+      set(chip, k(t, .1) * .85 * (1 - prog(t, duration - END - .1, duration - END + .2)));
       ground.style.transform = `scaleX(${k(t, .15, .7)})`;
       halo.style.opacity = (.85 * k(t, .3, 1.2)).toFixed(3);
       // question title: on for the question, then gone
@@ -206,6 +214,7 @@
         set(v.q, k(t, s.start - .2, .6), (1 - k(t, s.start - .2, .6)) * 20);
         set(v.r, k(t, s.start + .6, .5));
       });
+      if (pic) pic.render(t, { segs, drawOf, firstSeg, i, endStart: duration - END });
       wm(t, duration - END);
       end(t, duration - END);
     } };

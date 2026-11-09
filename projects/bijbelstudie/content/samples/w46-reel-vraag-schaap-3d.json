@@ -1,0 +1,146 @@
+{
+  "id": "w46-reel-vraag-schaap-3d",
+  "kind": "reel-vraag",
+  "week": "2026-W46",
+  "slot": "2026-11-13T19:30:00+01:00",
+  "platforms": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube"
+  ],
+  "caption": "Waarom zou God omkijken naar één mens tussen miljarden? Jezus vertelde over een herder die één verloren schaap ging zoeken. Lees Lukas 15 met uitleg in de BijbelStudie app.",
+  "hashtags": [
+    "#verlorenschaap",
+    "#bijbel",
+    "#geloof",
+    "#bijbelstudie"
+  ],
+  "voice": "male",
+  "music": "reflective",
+  "captions": "none",
+  "subject": "Waarom God naar één mens omkijkt",
+  "basedOn": "Lukas 15:3-7 (het verloren schaap)",
+  "experiment": {
+    "hook": "vraag",
+    "topic": "thema"
+  },
+  "look": "3d",
+  "sfeer": "nacht",
+  "question": "Waarom zou God omkijken naar één mens tussen miljarden?",
+  "key": "één mens",
+  "draw": [
+    {
+      "p": "persoon",
+      "at": "midden",
+      "pose": "verdrietig"
+    },
+    {
+      "p": "ster",
+      "at": "boven"
+    }
+  ],
+  "scenes": [
+    {
+      "say": "Het voelt logisch. Er leven miljarden mensen op aarde, dus wie ben jij nou? Gewoon één van de velen.",
+      "show": "Miljarden mensen. Wie ben jij nou?",
+      "key": "jij",
+      "draw": [
+        {
+          "p": "persoon",
+          "at": "links"
+        },
+        {
+          "p": "persoon",
+          "at": "midden",
+          "pose": "verdrietig",
+          "label": "jij"
+        },
+        {
+          "p": "persoon",
+          "at": "rechts"
+        }
+      ]
+    },
+    {
+      "say": "Jezus vertelde over een herder met honderd schapen. Eén schaap raakte kwijt, ergens in de woestijn.",
+      "show": "Honderd schapen. Eén raakt kwijt.",
+      "key": "kwijt",
+      "draw": [
+        {
+          "p": "schaap",
+          "at": "links",
+          "label": "1 van de 100"
+        },
+        {
+          "p": "berg",
+          "at": "rechts"
+        }
+      ]
+    },
+    {
+      "say": "Hij laat de negenennegentig achter en gaat zoeken in het donker, net zo lang tot hij dat ene schaap gevonden heeft.",
+      "show": "Hij zoekt tot hij dat ene schaap vindt.",
+      "key": "zoekt",
+      "draw": [
+        {
+          "p": "lamp",
+          "at": "links"
+        },
+        {
+          "p": "weg",
+          "at": "midden"
+        },
+        {
+          "p": "schaap",
+          "at": "rechts"
+        }
+      ]
+    },
+    {
+      "say": "Wat mens onder u, hebbende honderd schapen; en een van die verliezende, verlaat niet de negen en negentig in de woestijn, en gaat naar het verlorene, totdat hij hetzelve vinde?",
+      "verse": "Lukas 15:4",
+      "verseKeys": [
+        "verlorene",
+        "vinde"
+      ]
+    },
+    {
+      "say": "Voor God ben je dus geen nummer. Juist dat ene schaap is het waard om te zoeken.",
+      "show": "Voor God ben je geen nummer.",
+      "key": "nummer",
+      "draw": [
+        {
+          "p": "schaap",
+          "at": "midden",
+          "big": true
+        },
+        {
+          "p": "hart",
+          "at": "boven"
+        }
+      ]
+    },
+    {
+      "say": "Er is blijdschap in de hemel over één mens die terugkomt. Niet over een menigte, over één.",
+      "show": "Blijdschap in de hemel over één.",
+      "key": "één",
+      "draw": [
+        {
+          "p": "persoon",
+          "at": "links",
+          "pose": "lopen"
+        },
+        {
+          "p": "huis",
+          "at": "rechts"
+        },
+        {
+          "p": "ster",
+          "at": "boven"
+        }
+      ]
+    }
+  ],
+  "ask": "Weet jij dat Hij ook naar jou zoekt?"
+}

@@ -26,6 +26,7 @@ export const TRAITS = {
   style: { label: 'Look', of: s => (isVideo(s.kind) || s.kind === 'carousel') ? (s.style || DEFAULT_STYLE[s.kind]) : null },
   voice: { label: 'Stem', of: s => isVideo(s.kind) ? (s.kind === 'reel-3d' && s.shots?.some(x => x.by) ? 'dialoog' : hasVoice(s) ? s.voice : 'geen') : null },
   style3d: { label: 'Look 3D', of: s => s.kind === 'reel-3d' ? (s.style3d || 'lowpoly') : null },
+  vraagLook: { label: 'Look eerlijke vraag', of: s => s.kind === 'reel-vraag' ? (s.look || 'tekening') : null },   // Alex, 9 Nov: test both
   voiceStyle: { label: 'Stemstijl', of: s => hasVoice(s) ? (s.voiceStyle || 'rustig') : null },
   music: { label: 'Muziek', of: s => isVideo(s.kind) ? (s.music || 'none') : null },
   captions: { label: 'Ondertitels', of: s => hasVoice(s) && s.kind !== 'reel-quiz' && s.kind !== 'reel-kinetic' && s.kind !== 'reel-verse' ? (s.captions || 'block') : null },
@@ -153,7 +154,7 @@ export function catalogue({ voices = ['male', 'female'], moods = [], voiceStyles
   const only = (list, allowed) => list.filter(v => !allowed || allowed.includes(v));   // project.json limits (formatsAllowed, ...)
   return {
     format: only(REEL_KINDS.filter(k => RENDERABLE.includes(k)), formats), postFormat: only(POST_KINDS.filter(k => RENDERABLE.includes(k)), postFormats),
-    style: only(STYLES, styles), style3d: only(STYLES3D, styles3d), voice: narratorOnly ? voices : [...voices, 'dialoog', 'geen'], voiceStyle: VOICE_STYLES.filter(v => !voiceStyles || voiceStyles.includes(v)),
+    style: only(STYLES, styles), style3d: only(STYLES3D, styles3d), vraagLook: ['tekening', '3d'], voice: narratorOnly ? voices : [...voices, 'dialoog', 'geen'], voiceStyle: VOICE_STYLES.filter(v => !voiceStyles || voiceStyles.includes(v)),
     music: ['none', ...MOODS.filter(m => m !== 'none' && moods.includes(m))], captions: CAPTIONS,
     hook: HOOKS, topic: TOPICS,
   };
@@ -183,7 +184,7 @@ export function weekAllocation(board, { mainPerDay = 1, extraPerDay = 2, feedPos
     feedPosts: { slots: feedPosts, platforms: 'instagram, facebook', format: share(board.postFormat, feedPosts, .35) },
     // targets over all reels (soft: within 1 of these is fine; the validator only warns)
     targets: {
-      style: share(board.style, reels, .4), style3d: board.style3d ? share(board.style3d, Math.round(reels * .4), .6) : {}, music: share(board.music, reels, .4),
+      style: share(board.style, reels, .4), style3d: board.style3d ? share(board.style3d, Math.round(reels * .4), .6) : {}, vraagLook: board.vraagLook ? share(board.vraagLook, Math.max(1, Math.round(reels * .4)), .6) : {}, music: share(board.music, reels, .4),
       voice: share(board.voice, voiced, .4), voiceStyle: share(board.voiceStyle, Math.round(reels * .6), .4),
       captions: share(board.captions, Math.round(reels * .35), .4), hook: share(board.hook, reels + feedPosts, .5), topic: share(board.topic, reels + feedPosts, .5),
     },

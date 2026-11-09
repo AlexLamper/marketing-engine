@@ -266,6 +266,8 @@ export const ReelVraag = z.object({
   question: said(10, 90),                                  // the honest question, spoken first and the title
   key: z.string().max(30),                                 // the word(s) of the question in colour, e.g. "hel"
   series: z.string().max(24).optional(),                   // small chip top left; left out = "EERLIJKE VRAGEN"
+  look: z.enum(['tekening', '3d']).optional(),            // tekening (default): flat line drawings on cream; 3d: low-poly world (style B, Alex 9 Nov)
+  sfeer: z.enum(['avond', 'nacht']).optional(),           // 3d only: warm evening (default) or night
   draw: z.array(vraagDraw).max(3).default([]),             // the picture under the question
   scenes: z.array(z.object({
     say: said(8, 200),                                     // spoken; also the line on screen unless show is given

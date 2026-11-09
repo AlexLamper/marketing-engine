@@ -46,17 +46,13 @@
       "draw": [
         {
           "p": "persoon",
-          "at": "links"
+          "at": "midden",
+          "pose": "knielen",
+          "label": "jij"
         },
         {
           "p": "zon",
           "at": "boven"
-        },
-        {
-          "p": "persoon",
-          "at": "rechts",
-          "pose": "armen-open",
-          "label": "de vader"
         }
       ]
     },
