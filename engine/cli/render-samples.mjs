@@ -11,6 +11,11 @@ import { renderSpec, launch } from '../render/render.mjs';
 const args = process.argv.slice(2); const doUpload = args.includes('--upload'); const filter = args.find(a => !a.startsWith('--'));
 let d = null;
 if (doUpload) { const { db } = await import('../db.mjs'); d = await db(); await (await import('../library.mjs')).loadVoices(d); }
+if (filter === 'voice-test') {   // compare voice models/settings on a few lines (engine/cli/voice-test.mjs)
+  await (await import('./voice-test.mjs')).voiceTest(args.find(a => a.startsWith('--voice='))?.slice(8) || 'male');
+  if (d) await (await import('../db.mjs')).close();
+  process.exit(0);
+}
 const dir = project().paths.samples;
 const files = existsSync(dir) ? readdirSync(dir).filter(f => f.endsWith('.json') && (!filter || f.includes(filter))) : [];
 const browser = await launch();
