@@ -1,0 +1,108 @@
+{
+  "id": "2026-w46-fri-vraag",
+  "kind": "reel-vraag",
+  "week": "2026-W46",
+  "slot": "2026-11-13T19:30:00+01:00",
+  "platforms": ["instagram", "facebook", "tiktok", "youtube"],
+  "caption": "'Ik geloof, Heere! kom mijn ongelovigheid te hulp.' Een vader roept het met tranen, in één adem (Markus 9:24).\n\nLet op wat eraan voorafgaat. Hij vraagt Jezus om hulp, 'zo Gij iets kunt' (vers 22). Jezus geeft die woorden terug: 'Zo gij kunt geloven' (vers 23). Geloof en twijfel in één gebed - en Jezus stuurt hem niet weg.\n\nLees Markus 9 met uitleg naast de tekst in de BijbelStudie app. Download gratis.",
+  "hashtags": ["#twijfel", "#geloof", "#markus", "#bijbel", "#bijbelstudie"],
+  "voice": "male",
+  "voiceStyle": "rustig",
+  "music": "reflective",
+  "captions": "none",
+  "look": "tekening",
+  "subject": "Twijfelen en toch geloven",
+  "basedOn": "Markus 9 SV: zoon met een stomme geest (17), discipelen konden niet (18), van kindsheid af (21), zo Gij iets kunt (22), Zo gij kunt geloven, alle dingen zijn mogelijk (23), met tranen: Ik geloof, Heere! kom mijn ongelovigheid te hulp (24), bij de hand, hij stond op (25-27).",
+  "experiment": {
+    "hook": "herkenning",
+    "topic": "vers",
+    "note": "Eén vers (Markus 9:24) draagt de video. Stem male volgens allocation (n=0), na drie keer Daniel. De vraag terug eindigt met Alex' vaste slotzin; het vers in gewone woorden (lessons.md)."
+  },
+  "endCard": {
+    "headline": "Lees Markus 9 met uitleg.",
+    "button": "Download gratis"
+  },
+  "question": "Mag je twijfelen als je gelooft?",
+  "key": "twijfelen",
+  "draw": [
+    { "p": "persoon", "at": "midden", "pose": "knielen" },
+    { "p": "vraagteken", "at": "boven" }
+  ],
+  "scenes": [
+    {
+      "say": "Misschien ken je het. Je gelooft, maar soms knaagt er iets. Wat als het allemaal niet klopt?",
+      "show": "Soms knaagt er iets. Wat als het allemaal niet klopt?",
+      "key": "knaagt",
+      "draw": [
+        { "p": "persoon", "at": "midden", "pose": "verdrietig" },
+        { "p": "wolk", "at": "boven" }
+      ]
+    },
+    {
+      "say": "In Markus negen komt een vader bij Jezus. Een boze geest kwelt zijn zoon al sinds hij klein was.",
+      "show": "Een vader brengt zijn zoon bij Jezus.",
+      "key": "vader",
+      "draw": [
+        { "p": "persoon", "at": "links", "pose": "lopen", "label": "een vader" },
+        { "p": "kind", "at": "rechts", "pose": "verdrietig" }
+      ]
+    },
+    {
+      "say": "De discipelen konden niets doen. Nu vraagt de vader Jezus om hulp. Maar hij twijfelt of Jezus het wel kan.",
+      "show": "Hij twijfelt of Jezus het wel kan.",
+      "key": "twijfelt",
+      "draw": [
+        { "p": "persoon", "at": "links", "pose": "knielen" },
+        { "p": "kind", "at": "rechts", "pose": "verdrietig" },
+        { "p": "vraagteken", "at": "boven" }
+      ]
+    },
+    {
+      "say": "Jezus antwoordt dat alles mogelijk is voor wie gelooft. En dan zegt de vader iets heel eerlijks.",
+      "show": "Alles is mogelijk voor wie gelooft.",
+      "key": "gelooft",
+      "draw": [
+        { "p": "persoon", "at": "links", "pose": "knielen" },
+        { "p": "kind", "at": "rechts", "pose": "verdrietig" },
+        { "p": "zon", "at": "boven" }
+      ]
+    },
+    {
+      "say": "Met tranen roept hij het uit. Ik geloof, Heer. Help mijn ongeloof.",
+      "verse": "Markus 9:24",
+      "verseKeys": ["geloof", "ongelovigheid"]
+    },
+    {
+      "say": "Hij gelooft en hij twijfelt, allebei tegelijk. En Jezus stuurt hem niet weg.",
+      "show": "Geloof en twijfel tegelijk. Jezus stuurt hem niet weg.",
+      "key": "tegelijk",
+      "draw": [
+        { "p": "vraagteken", "at": "links" },
+        { "p": "persoon", "at": "midden", "pose": "staan" },
+        { "p": "zon", "at": "rechts" }
+      ]
+    },
+    {
+      "say": "Jezus bevrijdt de jongen. Hij pakt hem bij de hand, en de jongen staat op.",
+      "show": "Hij pakt hem bij de hand. De jongen staat op.",
+      "key": "staat",
+      "draw": [
+        { "p": "persoon", "at": "links", "pose": "armen-open" },
+        { "p": "kind", "at": "rechts", "pose": "armen-open" },
+        { "p": "hart", "at": "boven" }
+      ]
+    },
+    {
+      "say": "Twijfel hoeft je dus niet bij Jezus weg te houden. Je mag ermee naar Hem toe, net als die vader.",
+      "show": "Je mag met je twijfel naar Hem toe.",
+      "key": "twijfel",
+      "draw": [
+        { "p": "persoon", "at": "links", "pose": "lopen" },
+        { "p": "weg", "at": "midden" },
+        { "p": "deur", "at": "rechts" },
+        { "p": "vraagteken", "at": "links" }
+      ]
+    }
+  ],
+  "ask": "Wat zou jij eerlijk tegen Hem durven zeggen? Lees het in Markus negen, met uitleg, in de BijbelStudie app."
+}
