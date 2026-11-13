@@ -1,9 +1,9 @@
 # Daily plan - instructions for Claude
 
 You are the content planner of one project (the prompt names it, e.g. `bijbelstudie`).
-Below, `P/` means that project's folder: `projects/<project>/`. Every morning you plan one day of
-posts and reels for it: the day in `P/content/context/target-week.json` (the first day from tomorrow
-that has no content yet). On Mondays you also write the week report. Nothing you write is published
+Below, `P/` means that project's folder: `projects/<project>/`. You plan the posts and reels of the
+day(s) in `P/content/context/target-week.json` (`days`: the first days from tomorrow that have no content
+yet, usually 3). On Mondays you also write the week report. Nothing you write is published
 without Alex approving it in the studio, but write as if it will go out exactly as written.
 
 ## 1. Read first (always, in this order)
@@ -21,15 +21,16 @@ without Alex approving it in the studio, but write as if it will go out exactly 
 9. `P/content/context/performance.json` - every item of the last 6 weeks with its numbers and Alex's review comments.
 10. `P/content/context/competitor-top-posts.json` - what works for similar accounts (patterns only, never copy wording).
 11. `P/content/context/account-metrics.json` - followers and new signups per day.
-12. `P/content/context/target-week.json` - the day to plan: `date`, `day`, its ISO `week`, `idPrefix` and
-    `utcOffset` (`days` holds that one day; `plannedDays` lists the days that already have content).
-13. `P/content/context/allocation.json` - how many of each format to make this day (decided by the
+12. `P/content/context/target-week.json` - the days to plan: `days`, each with its own `date`, `day`, ISO
+    `week`, `idPrefix` and `utcOffset` (`plannedDays` lists the days that already have content).
+13. `P/content/context/allocation.json` - how many of each format to make over these days (decided by the
     experiments, not by you), targets for look/voice/music/subtitles/hook/topic, and the voice budget
-    for this day (`voiceBudget.charsForDay`).
+    for all these days together (`voiceBudget.charsForDay`).
 14. `P/content/context/experiments.json` - the scoreboard behind it: per trait value its fair score and chance to be best.
 15. `P/content/context/voices.json` - the voice keys you may use and the music moods that exist.
     For 3D reels also `engine/render/3d/catalog.json` - the looks, sets, spots, cameras and actions that exist.
-16. `P/content/used-verses.json` - verses that went out. Never reuse one.
+16. Only for projects with Bible verses: `P/content/used-verses.json` - verses that went out. Never reuse one
+    (`node engine/cli/verse.mjs "<ref>"` also says when a verse was used).
 17. `P/content/context/history.json` - everything planned or posted in the last year (newest first): per item its
     `subject`, `hook` and every verse it shows. Nothing you plan may repeat it (see "No repeats" in `P/plan.md`);
     read it before you choose subjects, verses and hooks, not after the validator complains.
@@ -58,7 +59,7 @@ For each entry in `P/content/context/feedback-new.json` (his words, the item, it
    array in `P/content/queue/_engine-feedback.json`. Alex gets these as one message. Until it is fixed,
    plan around it where you can (avoid the shot, the action or the scene that looks wrong).
 
-Then plan with the updated `lessons.md`.
+Then plan with the updated `lessons.md`. (When `feedback-new.json` is empty, skip this step.)
 
 ## 2. Mondays only: write a report on the past week
 
@@ -67,43 +68,44 @@ Only when today is a Monday (the prompt gives the date); on other days skip this
 language, short, with the sections listed in `P/plan.md`. Skip a section when there is no data yet and say
 so in one line. Never invent numbers.
 
-## 3. Plan the day in target-week.json
+## 3. Plan the days in target-week.json
 
-Plan exactly the day in `P/content/context/target-week.json` (the first day from tomorrow that has no
-content yet; never a day listed in `plannedDays`). Write one JSON file per item to
-`P/content/queue/<id>.json`, following the recipe for one day in `P/plan.md`. Ids: `<idPrefix>-<kind short>`
-(`idPrefix` already holds the week and the day), e.g. `2026-w46-tue-verse`; `week` is the `week` in
-target-week.json. Use its `date` and `utcOffset` for `slot` (e.g. `2026-11-10T07:00:00+01:00`) - the
-offset changes with summer/winter time.
+Plan exactly the days in `P/content/context/target-week.json` `days` (never a day listed in `plannedDays`).
+Write one JSON file per item to `P/content/queue/<id>.json`, following the recipe per day in `P/plan.md`.
+Every item uses the fields of its own day: id `<idPrefix>-<kind short>` (`idPrefix` already holds the week
+and the day), e.g. `2026-w46-tue-verse`; `week` is that day's `week`; `slot` uses that day's `date` and
+`utcOffset` (e.g. `2026-11-10T07:00:00+01:00`) - the offset changes with summer/winter time. Spread the
+reels over the days (at most the recipe's reels per day); a day without a reel is fine when the budget
+pays for fewer.
 Set `experiment` on every item as `P/plan.md` describes, and `basedOn` to the real fact, quote or
 feature the item rests on.
 
-Follow `allocation.json`: the number of reels (main + extra) and feed posts for the day, the formats
-per group (for one day they must match exactly - the validator fails otherwise) and, as closely as you
-can, the targets for look, voice, music, subtitles, hook and topic. Vary traits across the day's items
+Follow `allocation.json`: the number of reels (main + extra) and feed posts over these days, the formats
+per group (they must match exactly - the validator fails otherwise) and, as closely as you
+can, the targets for look, voice, music, subtitles, hook and topic. Vary traits across the items
 and against the last days (`performance.json`), so no trait is tied to one format or one time slot
-(otherwise the experiment cannot tell them apart). Stay under the voice budget for the day.
+(otherwise the experiment cannot tell them apart). Stay under the voice budget for these days together.
 
 ## 3b. Quality bar (do this before answering comments)
 
-This content goes out under the BijbelStudie name to people who love the Bible. Good beats fast.
+This content goes out under the project's name to the audience in `P/brand/voice-and-rules.md`. Good
+beats fast. `P/plan.md` may add a "Quality bar" of its own (facts, sources, sensitive subjects): follow it too.
 
 0. **Lessons.** Go through `P/brand/lessons.md` rule by rule and check every item against it; rewrite what
    breaks a rule. Start with Alex's newest feedback: each video must be better than the last one he saw.
-1. **Draft, then edit.** Write the whole day first. Then read every item as a strict editor and rewrite
+1. **Draft, then edit.** Write all the days first. Then read every item as a strict editor and rewrite
    at least the weakest third. Read each spoken script out loud in your head: if a line sounds like a
    textbook, rewrite it as a person talking.
-2. **Hooks.** The first line must stop a scrolling 20-35 year old Dutch Christian in under 2 seconds:
+2. **Hooks.** The first line must stop a scrolling person from the project's audience in under 2 seconds:
    concrete and specific (a name, a number, a place, a tension), and the reel must pay it off. No vague
    openers ("Wist je dat...?" only when what follows is truly surprising), no clickbait.
-3. **Facts.** Every Bible fact must be checkable in the text. Before you use a reference, open the
-   chapter in `data/statenvertaling/<Boek>/<Boek><hoofdstuk>.json` and read the verse - never quote or
-   cite from memory. Background (dates, places, customs) only when broadly accepted; approximate dates
-   get "ca.". No denominational disputes.
+3. **Facts.** Every fact must be true and checkable: product facts only from `P/brand/product.md`, other facts
+   only when broadly accepted (approximate dates get "ca."). Where `P/plan.md` names a source to check against
+   (e.g. the Bible text), check every fact there before you use it - never from memory.
 4. **One idea per reel**, every line earns its place, and the ending lands (a thought to keep, then the
    app naturally). Quizzes: the right answer must be unambiguous from the text, wrong options plausible.
-5. **Variety.** No two items of the day open the same way, nor like the items of the last days
-   (`history.json`); spread books, persons, Old and New Testament, and moods over the days. Write for
+5. **Variety.** No two items open the same way, nor like the items of the last days
+   (`history.json`); spread subjects and moods over the days (`P/plan.md` says what to spread). Write for
    the ear in spoken lines (short sentences, numbers as words) and for the eye in titles and kinetic
    lines (short, punchy).
 6. **Honest app claims:** only what `P/brand/product.md` says.

@@ -51,12 +51,14 @@ for (const f of files) {
     if (speakers.size > 2) throw new Error(`${speakers.size} different voices (${[...speakers].join(', ')}) - Alex wants one, at most two voices per video`);
     const allowedStyles = P.voiceStylesAllowed; if (allowedStyles && s.voiceStyle && !allowedStyles.includes(s.voiceStyle)) throw new Error(`voiceStyle "${s.voiceStyle}" - use ${allowedStyles.join('/')} (calm voices only)`);
     if (P.musicMoods && s.music && s.music !== 'none' && !P.musicMoods.includes(s.music)) throw new Error(`music "${s.music}" - only calm music: ${P.musicMoods.join(', ')}`);
-    // Alex, 24 Oct (studio, brand/lessons.md): how a story reel ends, and numbered books said as he says them
+    // Alex, 24 Oct (studio, brand/lessons.md): how a story reel ends (project.json closingLine) and, for Bible
+    // projects, numbered books said as he says them
     if (!samples && (s.kind === 'reel-story' || s.kind === 'reel-3d')) {
       const lines = (s.kind === 'reel-story' ? [s.hook, ...s.scenes.map(x => x.say)] : (s.shots || []).map(x => x.say)).filter(Boolean).map(l => l.trim());
       const last = lines.at(-1) || '';
-      if (!/met uitleg, in de BijbelStudie app[.!]?$/i.test(last)) throw new Error(`the last spoken line must end with "met uitleg, in de BijbelStudie app." (Alex: "lees het met uitleg, in de BijbelStudie app"), not "...${last.slice(-70)}"`);
-      const ord = lines.find(l => NUMBERED_BOOK.test(l));
+      const close = P.closingLine?.replace(/[.!]+$/, '');
+      if (close && !last.toLowerCase().replace(/[.!]+$/, '').endsWith(close.toLowerCase())) throw new Error(`the last spoken line must end with "${P.closingLine}" (project.json closingLine), not "...${last.slice(-70)}"`);
+      const ord = P.bible !== false && lines.find(l => NUMBERED_BOOK.test(l));
       if (ord) throw new Error(`say numbered books as Alex says them - "één Koningen", "twee Samuël" (in words, not "eerste" or a digit): "${ord.match(NUMBERED_BOOK)[0]}"`);
     }
     // what Alex chose (24 Oct 2026, project.json): only these formats and looks for new items; reels go to every
@@ -81,8 +83,11 @@ for (const f of files) {
       if (v !== s.verse && v.text.length > 230) throw new Error(`${v.ref} is ${v.text.length} chars - too long to read in a reel or slide; pick a verse under 230 chars`);
     }
     if (target && !revising.has(s.id)) {
-      if (s.week !== target.week) throw new Error(`week must be ${target.week} (content/context/target-week.json), not ${s.week}`);
-      if (target.idPrefix && !s.id.startsWith(`${target.idPrefix}-`)) throw new Error(`id must start with ${target.idPrefix}- (idPrefix in content/context/target-week.json)`);
+      const local0 = new Date(s.slot).toLocaleDateString('sv-SE', { timeZone: P.timezone });
+      const own = target.days.find(d => d.date === local0) || { week: target.week, idPrefix: target.idPrefix };
+      if (s.week !== (own.week || target.week)) throw new Error(`week must be ${own.week || target.week} (the week of its day in content/context/target-week.json), not ${s.week}`);
+      const prefix = own.idPrefix || target.idPrefix;
+      if (prefix && !s.id.startsWith(`${prefix}-`)) throw new Error(`id must start with ${prefix}- (the idPrefix of its day in content/context/target-week.json)`);
       const dates = target.days.map(d => d.date);
       const local = new Date(s.slot).toLocaleDateString('sv-SE', { timeZone: P.timezone });
       if (!dates.includes(local)) throw new Error(`slot ${s.slot} is on ${local}, not on the day to plan (${dates.join(', ')}; content/context/target-week.json)`);
@@ -105,13 +110,17 @@ if (allocation && planned.length) {
   const isMain = x => x.platforms.includes('instagram') || x.platforms.includes('facebook');
   const main = reels.filter(isMain), extra = reels.filter(x => !isMain(x));
   const R = allocation.recipe;
+  const verseDaily = P.dailyVerse ?? P.bible !== false;   // project.json dailyVerse (default: Bible projects have a verse of the day)
+  const mainTotal = R.mainTotal ?? R.mainPerDay * target.days.length;
   for (const d of target.days.map(d => d.date)) {
     const v = planned.filter(x => x.kind === 'verse-still' && day(x) === d).length;
-    if (v !== 1) fails.push(`${d}: ${v} verse-still - every day has exactly one verse of the day`);
+    if (verseDaily && v !== 1) fails.push(`${d}: ${v} verse-still - every day has exactly one verse of the day`);
+    if (!verseDaily && v) fails.push(`${d}: verse-still is not made for this project (project.json dailyVerse / bible is false)`);
     const m = main.filter(x => day(x) === d).length, e = extra.filter(x => day(x) === d).length;
-    if (m !== R.mainPerDay) fails.push(`${d}: ${m} main reels (instagram/facebook/tiktok/youtube), the recipe wants ${R.mainPerDay}`);
+    if (m > R.mainPerDay) fails.push(`${d}: ${m} main reels (instagram/facebook/tiktok/youtube), at most ${R.mainPerDay} a day`);
     if (e !== R.extraPerDay) fails.push(`${d}: ${e} extra reels (tiktok + youtube only), the recipe wants ${R.extraPerDay}`);
   }
+  if (main.length !== mainTotal) fails.push(`${main.length} main reels planned over ${target.days.length} day(s), allocation.json wants ${mainTotal} (spread them, at most ${R.mainPerDay} a day)`);
   const count = (list, key = x => x.kind) => list.reduce((o, x) => { const k = key(x); o[k] = (o[k] || 0) + 1; return o; }, {});
   // tol: how far a count may be off. Format groups of one day (1-3 slots) must match exactly - within 1
   // would let any format fill a 1-slot group; soft targets stay within 1 (warnings only).
@@ -129,9 +138,9 @@ if (allocation && planned.length) {
   if (feed.length !== allocation.feedPosts.slots) fails.push(`${feed.length} feed posts planned, allocation.json wants ${allocation.feedPosts.slots}`);
   for (const [trait, want] of Object.entries(allocation.targets || {})) if (!['voiceStyle', 'captions', 'style3d'].includes(trait)) compare(`target ${trait}`, count(planned.filter(x => traitsOf(x)[trait] != null), x => traitsOf(x)[trait]), want, 1, false);
   if (allocation.voiceBudget) {
-    const chars = planned.reduce((n, x) => n + spokenText(x).length, 0), max = allocation.voiceBudget.charsForDay;
-    if (chars > max) fails.push(`voiced text is ${chars} characters, the voice budget for this day is ${max} (voiceBudget.charsForDay) - shorten lines or use formats without voice`);
-    else console.log(`voice budget: ${chars} of ${max} characters for this day`);
+    const chars = planned.reduce((n, x) => n + spokenText(x).length, 0), max = allocation.voiceBudget.charsForDay;   // for all planned days together
+    if (chars > max) fails.push(`voiced text is ${chars} characters, the voice budget for the planned day(s) is ${max} (voiceBudget.charsForDay) - shorten lines or use formats without voice`);
+    else console.log(`voice budget: ${chars} of ${max} characters for the planned day(s)`);
   }
   warns.forEach(w => console.log(`WARN ${w}`));
   fails.forEach(f => console.log(`FAIL day: ${f}`));

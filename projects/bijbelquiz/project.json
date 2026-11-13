@@ -54,5 +54,7 @@
   },
   "notify": {
     "from": "BijbelQuiz Studio <studio@bijbelquiz.com>"
-  }
+  },
+  "bible": true,
+  "planDays": 3
 }

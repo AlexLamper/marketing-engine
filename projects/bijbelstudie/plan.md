@@ -11,9 +11,19 @@ Paths here (`brand/`, `content/`) are inside this project folder, `projects/bijb
 - **Groei** - followers and new BijbelStudie signups, compared to the week before
 - **Volgende week** - what you change and why (one line per change)
 
+## Quality bar (this project, on top of `planner/PLAN.md` 3b)
+
+- Audience: 20-35 year old Dutch Christians who love the Bible; the content goes out under the BijbelStudie name.
+- **Bible facts:** every Bible fact must be checkable in the text. Before you use a reference, check it with
+  `node engine/cli/verse.mjs "<Boek> <hoofdstuk>:<vers>[-<vers>]"` (prints the exact Statenvertaling verses and
+  says when one was used; give only `"<Boek> <hoofdstuk>"` for a whole chapter) - never quote or cite from memory.
+  Read only the verses you need, not whole chapter files. Background (dates, places, customs) only when broadly
+  accepted. No denominational disputes.
+- **Spread** books, persons, Old and New Testament over the days.
+
 ## Recipe (per day)
 
-The planner plans one day per run (the day in `content/context/target-week.json`). What Alex chose on
+The planner plans the days in `content/context/target-week.json` (usually 3 per run); the recipe below is per day. What Alex chose on
 24 Oct 2026 (also in `project.json`: `formatsAllowed`, `stylesAllowed`, `style3dAllowed`, `recipe`,
 `narratorOnly`; the validator holds you to it):
 

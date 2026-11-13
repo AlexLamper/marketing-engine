@@ -19,20 +19,24 @@ const { traitsOf } = await import('../experiments.mjs');
 const rows = items.map(it => ({ id: it._id, week: it.week, kind: it.kind, status: it.status, traits: traitsOf(it.spec, it), experiment: it.spec.experiment,
   hook: it.spec.hook || it.spec.question || it.spec.headline || it.spec.line || it.spec.slides?.[0]?.title || it.spec.ref, slot: it.spec.slot, platforms: it.spec.platforms,
   results: score(it), perPlatform: it.metrics || {}, review: (it.reviewComments || []).map(c => c.text) }));
-writeFileSync(join(OUTD, 'performance.json'), JSON.stringify(rows, null, 2));
+writeFileSync(join(OUTD, 'performance.json'), JSON.stringify(rows));
 
 // Which day to plan: the first day from tomorrow (project timezone) that has no items yet, by the date the
 // planner gave them (plannedSlot once the publish job has given an item its real posting time). Only a label
 // for ids and the day's recipe now: items go online from the pile of approved items, not on this date.
-// The file keeps its name (target-week.json) and its shape; `days` holds just that one day.
-const { dayTarget } = await import('../days.mjs');
+// The file keeps its name (target-week.json); `days` holds the days to plan in this run (project.json
+// `planDays`, default 3: the planner's fixed reading cost is shared over more items). The top-level
+// date/day/week/idPrefix are the first day's, for older readers.
+const { daysTarget } = await import('../days.mjs');
+const PLAN_DAYS = Math.max(1, Math.min(7, Number(process.env.PLAN_DAYS || P.planDays || 3)));
 const since = new Date(Date.now() - 2 * 864e5);
 const upcoming = await d.collection('items').find({ $or: [{ plannedSlot: { $gte: since } }, { plannedSlot: null, slot: { $gte: since } }] }, { projection: { slot: 1, plannedSlot: 1 } }).toArray();
-const T = dayTarget(upcoming.map(it => it.plannedSlot || it.slot), { tz: P.timezone });
+const T = daysTarget(upcoming.map(it => it.plannedSlot || it.slot), { tz: P.timezone, count: PLAN_DAYS });
+const N = T.days.length;
 const target = { date: T.date, day: T.day, week: T.week, idPrefix: T.idPrefix, utcOffset: T.utcOffset,
-  note: `Plan exactly this one day (${T.day} ${T.date}, ${P.timezone}). Item ids start with idPrefix, e.g. ${T.idPrefix}-verse; "week" is ${T.week}.`,
-  days: [{ day: T.day, date: T.date, utcOffset: T.utcOffset }], daysAhead: T.daysAhead, plannedDays: T.plannedDays };
-writeFileSync(join(OUTD, 'target-week.json'), JSON.stringify(target, null, 2));
+  note: `Plan exactly these ${N} day(s): ${T.days.map(x => `${x.day} ${x.date}`).join(', ')} (${P.timezone}). Each item uses the idPrefix, week and utcOffset of its own day, e.g. ${T.idPrefix}-verse with week ${T.week}.`,
+  days: T.days, daysAhead: T.daysAhead, plannedDays: T.plannedDays };
+writeFileSync(join(OUTD, 'target-week.json'), JSON.stringify(target));
 if (process.env.GITHUB_OUTPUT) (await import('node:fs')).appendFileSync(process.env.GITHUB_OUTPUT, `date=${T.date}\n`);
 // Plan a day every morning, unless enough is waiting already: PLAN_BACKLOG items still to be made or
 // reviewed, or PLAN_PILE approved items not yet online (about a week of posts). The context is still
@@ -40,7 +44,10 @@ if (process.env.GITHUB_OUTPUT) (await import('node:fs')).appendFileSync(process.
 const PLAN_BACKLOG = 20, PLAN_PILE = 25;
 const backlog = await d.collection('items').countDocuments({ status: { $in: ['queued', 'rendering', 'review', 'changes'] } });
 const pile = await d.collection('items').countDocuments({ status: 'approved', postAt: null });
-const skip = (backlog >= PLAN_BACKLOG || pile >= PLAN_PILE) && !process.env.PLAN_FORCE;
+// With planDays > 1 a run plans several days, so the next run only plans when tomorrow has nothing yet
+// (about once every planDays days) - otherwise it would plan further and further ahead and overspend the voice budget.
+const ahead = N > 1 && T.daysAhead > 1;
+const skip = (backlog >= PLAN_BACKLOG || pile >= PLAN_PILE || ahead) && !process.env.PLAN_FORCE;
 
 // Experiments: the scoreboard and the day's allocation (engine/experiments.mjs), the voices and
 // music that exist, and the voice budget for the day.
@@ -58,28 +65,28 @@ const R = project().recipe || {};
 // planned reel (at most 7). No reel paid for: that day has only the verse.
 const REEL_CHARS = 850, SAVE_DAYS = 7;   // 850: a 60-second reel-vraag (Alex, 9 Nov: about 60 s; 628 characters gave 43 s)
 const budget = await elevenlabsBudget();
-let reelsToday = R.reelsPerDay, voiceBudget = null;
+let reelsToday = R.reelsPerDay != null ? R.reelsPerDay * N : null, voiceBudget = null;
 if (budget) {
   const daysLeft = budget.resetsAt ? Math.max(1, Math.ceil((new Date(budget.resetsAt) - Date.now()) / 864e5)) : 30;
   const share = Math.max(0, Math.floor(budget.left / daysLeft));
   const last = await d.collection('items').find({ kind: /^reel-/, createdAt: { $exists: true } }).sort({ createdAt: -1 }).limit(1).next();
   const saved = last ? Math.min(SAVE_DAYS, Math.max(1, Math.round((Date.now() - new Date(last.createdAt)) / 864e5))) : SAVE_DAYS;
-  const pot = Math.max(0, Math.min(budget.left - 100, share * saved));
-  if (R.reelsPerDay != null) reelsToday = Math.min(R.reelsPerDay, Math.floor(pot / REEL_CHARS));
+  const pot = Math.max(0, Math.min(budget.left - 100, share * Math.min(SAVE_DAYS, Math.max(saved, N))));   // the days since the last planned reel, at least the days of this run
+  if (R.reelsPerDay != null) reelsToday = Math.min(R.reelsPerDay * N, Math.floor(pot / REEL_CHARS));
   voiceBudget = { charsForDay: reelsToday ? pot : 0, reelsPaidFor: reelsToday, leftThisMonth: budget.left, daysUntilReset: daysLeft, resetsAt: budget.resetsAt, savedDays: saved,
-    note: `Total spoken characters of all voiced items of this day must stay under charsForDay (the validator checks). The day's reels are what the budget pays in full (about ${REEL_CHARS} characters each): write full-length scripts, do not shorten them to fit more.` };
-  console.log(`[${P.id}] voice budget: ${budget.left} characters left until ${String(budget.resetsAt).slice(0, 10)} (${daysLeft} days), ${share} a day x ${saved} saved = ${pot} -> ${reelsToday} reel(s) today`);
+    note: `Total spoken characters of all voiced items of these ${N} day(s) together must stay under charsForDay (the validator checks). The reels (spread over the days, at most ${R.reelsPerDay} a day) are what the budget pays in full (about ${REEL_CHARS} characters each): write full-length scripts, do not shorten them to fit more.` };
+  console.log(`[${P.id}] voice budget: ${budget.left} characters left until ${String(budget.resetsAt).slice(0, 10)} (${daysLeft} days), ${share} a day x ${saved} saved = ${pot} -> ${reelsToday} reel(s) for ${N} day(s)`);
 }
-const allocation = { date: T.date, day: T.day, week: T.week, ...weekAllocation(B.board, { days: 1, ...(reelsToday != null ? { mainPerDay: reelsToday, extraPerDay: 0 } : {}),
-  feedPosts: R.feedPosts === 0 ? 0 : FEED_DAYS.includes(T.day) ? 1 : 0, seed: seed + 7919 }) };
+const allocation = { date: T.date, day: T.day, week: T.week, ...weekAllocation(B.board, { days: N, ...(reelsToday != null ? { mainTotal: reelsToday, mainPerDay: R.reelsPerDay, extraPerDay: 0 } : {}),
+  feedPosts: R.feedPosts === 0 ? 0 : T.days.filter(x => FEED_DAYS.includes(x.day)).length, seed: seed + 7919 }), days: T.days.map(x => x.date) };
 if (voiceBudget) allocation.voiceBudget = voiceBudget;
-writeFileSync(join(OUTD, 'allocation.json'), JSON.stringify(allocation, null, 2));
+writeFileSync(join(OUTD, 'allocation.json'), JSON.stringify(allocation));
 if (!skip) await d.collection('experiments').updateOne({ _id: `allocation-${T.date}` }, { $set: { ...allocation, at: new Date() } }, { upsert: true });
-writeFileSync(join(OUTD, 'experiments.json'), JSON.stringify({ note: 'Per trait value: n = scored item-platform results, mean = average fair score (0.5 = median), avgViews, pBest = chance it is the best. Higher pBest got more slots in allocation.json.', trials: B.trials, items: B.items, board: B.board }, null, 2));
-writeFileSync(join(OUTD, 'voices.json'), JSON.stringify({ note: 'Voice keys a spec may use in "voice". male/female = the two default voices.', voices: voiceKeys(voiceLibrary()).map(k => { const v = voiceLibrary().find(x => x.key === k); return { key: k, name: v?.name || k, gender: v?.gender || (k === 'male' || k === 'female' ? k : null) }; }), musicMoods: musicMoods() }, null, 2));
+writeFileSync(join(OUTD, 'experiments.json'), JSON.stringify({ note: 'Per trait value: n = scored item-platform results, mean = average fair score (0.5 = median), avgViews, pBest = chance it is the best. Higher pBest got more slots in allocation.json.', trials: B.trials, items: B.items, board: B.board }));
+writeFileSync(join(OUTD, 'voices.json'), JSON.stringify({ note: 'Voice keys a spec may use in "voice". male/female = the two default voices.', voices: voiceKeys(voiceLibrary()).map(k => { const v = voiceLibrary().find(x => x.key === k); return { key: k, name: v?.name || k, gender: v?.gender || (k === 'male' || k === 'female' ? k : null) }; }), musicMoods: musicMoods() }));
 
 const changes = await d.collection('items').find({ status: STATUS.CHANGES }).toArray();
-writeFileSync(join(OUTD, 'changes-requested.json'), JSON.stringify(changes.map(it => ({ id: it._id, spec: it.spec, comments: it.reviewComments })), null, 2));
+writeFileSync(join(OUTD, 'changes-requested.json'), JSON.stringify(changes.map(it => ({ id: it._id, spec: it.spec, comments: it.reviewComments }))));
 
 // What Alex rejected in the last 60 days: the records the stats job keeps when it removes a rejected item
 // (Mongo `rejected`), plus items rejected less than a day ago that are still there.
@@ -88,7 +95,7 @@ const fresh = (await d.collection('items').find({ status: STATUS.REJECTED }).toA
 const kept = await d.collection('rejected').find({ rejectedAt: { $gte: new Date(Date.now() - 60 * 864e5) } }).toArray();
 const rejected = [...fresh, ...kept.filter(r => !fresh.some(f => f._id === r._id))]
   .sort((a, b) => new Date(b.rejectedAt || 0) - new Date(a.rejectedAt || 0)).map(({ _id, ...r }) => ({ id: _id, ...r }));
-writeFileSync(join(OUTD, 'rejected.json'), JSON.stringify({ note: 'Items Alex rejected in the last 60 days, newest first: kind, subject, hook, traits and his comments. Avoid making that again - read his comments to see why.', items: rejected }, null, 2));
+writeFileSync(join(OUTD, 'rejected.json'), JSON.stringify({ note: 'Items Alex rejected in the last 60 days, newest first: kind, subject, hook, traits and his comments. Avoid making that again - read his comments to see why.', items: rejected }));
 
 // Alex's review comments not yet turned into lessons (P/brand/lessons.md; planner/PLAN.md step 1b).
 // cli/lessons-learned.mjs marks them learned after the run succeeded, so a failed run sees them again.
@@ -96,15 +103,15 @@ const { writeNewFeedback } = await import('../lessons.mjs');
 const feedback = { length: await writeNewFeedback(d, OUTD) };
 
 const comments = await d.collection('comments').find({ status: 'new', draft: { $exists: false } }).limit(100).toArray();
-writeFileSync(join(OUTD, 'comments-to-answer.json'), JSON.stringify(comments.map(c => ({ commentId: c._id, itemId: c.itemId, username: c.username, text: c.text })), null, 2));
+writeFileSync(join(OUTD, 'comments-to-answer.json'), JSON.stringify(comments.map(c => ({ commentId: c._id, itemId: c.itemId, username: c.username, text: c.text }))));
 
 const insights = await d.collection('insights').find({ at: { $gte: weeksBack } }).sort({ at: -1 }).toArray();
 const top = insights.flatMap(i => (i.snap?.media?.data || []).map(m => ({ account: i.username, type: m.media_product_type, caption: (m.caption || '').slice(0, 300), likes: m.like_count, comments: m.comments_count, views: m.view_count, at: m.timestamp })))
   .sort((a, b) => (b.views || b.likes || 0) - (a.views || a.likes || 0)).slice(0, 40);
-writeFileSync(join(OUTD, 'competitor-top-posts.json'), JSON.stringify(top, null, 2));
+writeFileSync(join(OUTD, 'competitor-top-posts.json'), JSON.stringify(top));
 
 const metrics = await d.collection('metrics').find().sort({ _id: -1 }).limit(42).toArray();
-writeFileSync(join(OUTD, 'account-metrics.json'), JSON.stringify(metrics, null, 2));
+writeFileSync(join(OUTD, 'account-metrics.json'), JSON.stringify(metrics));
 
 const verses = await d.collection('verses').find().toArray();
 // keep refs that are only in the file (e.g. verses posted before the engine existed)
@@ -117,10 +124,10 @@ writeFileSync(P.paths.usedVerses, JSON.stringify(ledger, null, 2));
 // must not repeat (engine/repeats.mjs, checked by the validator and again on import).
 const { historyFrom, VERSE_DAYS, SUBJECT_WEEKS, APP_SUBJECT_WEEKS, HOOK_WEEKS } = await import('../repeats.mjs');
 const history = historyFrom(await d.collection('items').find({ slot: { $gte: new Date(Date.now() - 400 * 864e5) } }).sort({ slot: -1 }).toArray());
-writeFileSync(join(OUTD, 'history.json'), JSON.stringify({ note: `Do not repeat: a verse of the day never again; any shown verse not within ${VERSE_DAYS} days; a subject not within ${SUBJECT_WEEKS} weeks (app/praktisch: ${APP_SUBJECT_WEEKS}) and never twice in a week; a hook not (nearly) the same within ${HOOK_WEEKS} weeks. Newest first.`, items: history }, null, 2));
-console.log(`[${P.id}] target ${T.day} ${T.date} (${T.week}, ${T.daysAhead} days ahead); context: ${rows.length} items, ${history.length} in history, ${changes.length} changes, ${rejected.length} rejected, ${feedback.length} new review comments to learn from, ${comments.length} comments, ${top.length} competitor posts`);
+writeFileSync(join(OUTD, 'history.json'), JSON.stringify({ note: `Do not repeat: a verse of the day never again; any shown verse not within ${VERSE_DAYS} days; a subject not within ${SUBJECT_WEEKS} weeks (app/praktisch: ${APP_SUBJECT_WEEKS}) and never twice in a week; a hook not (nearly) the same within ${HOOK_WEEKS} weeks. Newest first.`, items: history }));
+console.log(`[${P.id}] target ${T.days.map(x => x.date).join(', ')} (${T.daysAhead} days ahead); context: ${rows.length} items, ${history.length} in history, ${changes.length} changes, ${rejected.length} rejected, ${feedback.length} new review comments to learn from, ${comments.length} comments, ${top.length} competitor posts`);
 if (skip) {
-  console.log(`[${P.id}] enough waiting (${backlog} to make or review, ${pile} approved on the pile) - no new day planned today`);
+  console.log(ahead && backlog < PLAN_BACKLOG && pile < PLAN_PILE ? `[${P.id}] tomorrow is planned already (next free day ${T.date}) - the next run plans ${N} days when tomorrow is free` : `[${P.id}] enough waiting (${backlog} to make or review, ${pile} approved on the pile) - no new day planned today`);
   if (process.env.GITHUB_OUTPUT) (await import('node:fs')).appendFileSync(process.env.GITHUB_OUTPUT, 'skip=true\n');
 }
 await heartbeat('plan', { day: T.date, items: rows.length, changes: changes.length });

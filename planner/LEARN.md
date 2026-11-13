@@ -20,4 +20,9 @@ made twice. You plan and write no items.
    Te beoordelen; an engine-only rule is handled by the engine fix, which makes them again too.)
    When the prompt says "recheck", check every item in `pending.json` against every rule in `lessons.md`, not
    only the new ones (the rules changed and the items were made before).
-5. Then stop. The workflow marks the comments as learned and starts the engine fix when needed.
+5. **Keep lessons.md short** (every planner run reads it, so every extra line costs on every run): when it holds
+   more than 60 rules, tidy it in the same run. Merge rules that make the same point into one (keep every concrete
+   example and every "(Alex, <datum>: ...)" quote, shortened), cut repeated wording, and drop a rule only when
+   another rule fully covers it. Never drop or weaken a point, never touch "Opgelost in de engine (niet
+   terugdraaien)" beyond shortening each line, and keep the headings. Run the validator again afterwards.
+6. Then stop. The workflow marks the comments as learned and starts the engine fix when needed.

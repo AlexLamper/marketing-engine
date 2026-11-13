@@ -40,3 +40,20 @@ export function dayTarget(slots, { now = new Date(), tz = 'Europe/Amsterdam' } =
   const week = isoWeekOf(date), day = dayName(date);
   return { today, date, day, week, idPrefix: `${week.toLowerCase()}-${day}`, utcOffset: utcOffset(date, tz), daysAhead: daysBetween(today, date), plannedDays: [...planned].sort() };
 }
+
+/**
+ * The days to plan in one run: the first `count` local dates from tomorrow on that have no item yet
+ * (planning several days per run shares the planner's fixed reading cost over more items).
+ * Returns the first day's fields (as dayTarget) plus `days`: one entry per day with its own week and idPrefix.
+ */
+export function daysTarget(slots, { count = 1, now = new Date(), tz = 'Europe/Amsterdam' } = {}) {
+  const first = dayTarget(slots, { now, tz });
+  const planned = new Set(first.plannedDays);
+  const days = [];
+  for (let date = first.date; days.length < Math.max(1, count); date = addDays(date, 1)) {
+    if (planned.has(date)) continue;
+    const week = isoWeekOf(date), day = dayName(date);
+    days.push({ day, date, week, idPrefix: `${week.toLowerCase()}-${day}`, utcOffset: utcOffset(date, tz) });
+  }
+  return { ...first, days };
+}
