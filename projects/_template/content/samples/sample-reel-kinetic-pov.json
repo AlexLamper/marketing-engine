@@ -1,0 +1,21 @@
+{
+  "id": "sample-reel-kinetic-pov",
+  "kind": "reel-kinetic",
+  "week": "2026-W47",
+  "slot": "2026-11-19T19:30:00+01:00",
+  "platforms": ["instagram", "facebook", "tiktok", "youtube"],
+  "caption": "TODO: herkenbaar moment + {{name}}. Download {{name}} gratis.",
+  "hashtags": ["#app"],
+  "experiment": { "hook": "pov", "topic": "probleem" },
+  "basedOn": "TODO: het probleem uit brand/product.md",
+  "subject": "TODO pov",
+  "style": "dark",
+  "music": "calm",
+  "hook": "POV: TODO herkenbaar moment",
+  "lines": [
+    { "text": "TODO: het gedoe", "emphasis": "gedoe" },
+    { "text": "TODO: wat je eigenlijk wilt", "emphasis": "wilt" },
+    { "text": "TODO: zo lost {{name}} het op", "emphasis": "{{name}}" }
+  ],
+  "endCard": { "headline": "{{headline}}" }
+}

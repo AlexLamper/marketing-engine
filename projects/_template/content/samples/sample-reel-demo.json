@@ -1,0 +1,18 @@
+{
+  "id": "sample-reel-demo",
+  "kind": "reel-demo",
+  "week": "2026-W47",
+  "slot": "2026-11-18T19:30:00+01:00",
+  "platforms": ["instagram", "facebook", "tiktok", "youtube"],
+  "caption": "TODO: het probleem in een zin, en hoe {{name}} het oplost. Download {{name}} gratis.",
+  "hashtags": ["#app"],
+  "hook": "TODO: het probleem, concreet",
+  "scenes": [
+    { "screenshot": "01-home", "caption": "TODO: wat je hier ziet" },
+    { "screenshot": "02-feature", "caption": "TODO: de functie die het oplost" }
+  ],
+  "basedOn": "TODO: functie uit brand/product.md",
+  "subject": "TODO demo",
+  "experiment": { "hook": "pijnpunt", "topic": "functie" },
+  "endCard": { "headline": "{{headline}}", "button": "Download gratis" }
+}

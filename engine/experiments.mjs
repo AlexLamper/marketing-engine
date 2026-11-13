@@ -12,7 +12,7 @@
 //    evenly, so new things keep getting tried) + the rest in proportion to that chance. A day has only
 //    a few slots per group, so the remainders are drawn at random (seeded per day) in proportion to
 //    their size: over the days every value gets its share instead of the leader taking every slot.
-import { HOOKS, TOPICS, STYLES, STYLES3D, MOODS, CAPTIONS, VOICE_STYLES, REEL_KINDS, VOICE_REQUIRED, RENDERABLE, isVideo } from './spec.mjs';
+import { HOOKS, TOPICS, APP_HOOKS, APP_TOPICS, STYLES, STYLES3D, MOODS, CAPTIONS, VOICE_STYLES, REEL_KINDS, VOICE_REQUIRED, RENDERABLE, isVideo } from './spec.mjs';
 
 export const POST_KINDS = ['post-spotlight', 'post-statement', 'carousel'];
 export const DEFAULT_STYLE = { 'reel-explainer': 'light', 'reel-demo': 'light', 'reel-verse': 'photo', 'reel-kinetic': 'dark', 'reel-quiz': 'light', 'reel-list': 'light', 'reel-story': 'dark', 'reel-vraag': 'light', carousel: 'light' };
@@ -150,13 +150,13 @@ export function capAllocation(alloc, rows, cap) {
 }
 
 /** Everything that can be tested (the catalogue), given the voices and music that exist. */
-export function catalogue({ voices = ['male', 'female'], moods = [], voiceStyles = null, formats = null, postFormats = null, styles = null, styles3d = null, narratorOnly = false } = {}) {
+export function catalogue({ voices = ['male', 'female'], moods = [], voiceStyles = null, formats = null, postFormats = null, styles = null, styles3d = null, narratorOnly = false, bible = true, hooks = null, topics = null } = {}) {
   const only = (list, allowed) => list.filter(v => !allowed || allowed.includes(v));   // project.json limits (formatsAllowed, ...)
   return {
     format: only(REEL_KINDS.filter(k => RENDERABLE.includes(k)), formats), postFormat: only(POST_KINDS.filter(k => RENDERABLE.includes(k)), postFormats),
     style: only(STYLES, styles), style3d: only(STYLES3D, styles3d), vraagLook: ['tekening', '3d'], voice: narratorOnly ? voices : [...voices, 'dialoog', 'geen'], voiceStyle: VOICE_STYLES.filter(v => !voiceStyles || voiceStyles.includes(v)),
     music: ['none', ...MOODS.filter(m => m !== 'none' && moods.includes(m))], captions: CAPTIONS,
-    hook: HOOKS, topic: TOPICS,
+    hook: only(bible ? HOOKS : APP_HOOKS, hooks), topic: only(bible ? TOPICS : APP_TOPICS, topics),   // project.json bible / hooks / topics
   };
 }
 
@@ -171,14 +171,15 @@ export const formatTolerance = slots => slots >= 7 ? 1 : 0;
  * One day: { days: 1, feedPosts: 1 on a feed day else 0, seed }. With `seed` the remainders are drawn at random
  * (see allocate), so a 1-slot group explores across days; without it the result is deterministic.
  */
-export function weekAllocation(board, { mainPerDay = 1, extraPerDay = 2, feedPosts = 4, days = 7, seed = null } = {}) {
-  const main = mainPerDay * days, extra = extraPerDay * days, reels = main + extra;
+export function weekAllocation(board, { mainPerDay = 1, mainTotal = null, extraPerDay = 2, feedPosts = 4, days = 7, seed = null } = {}) {
+  // mainTotal: the main reels of all days together when the voice budget pays for fewer than mainPerDay x days
+  const main = mainTotal ?? mainPerDay * days, extra = extraPerDay * days, reels = main + extra;
   const fmt = board.format; const voiced = reels;
   const rand = seed == null ? null : rng(seed);
   const share = (rows, slots, explore, o = {}) => allocate(rows, slots, explore, { ...o, rand });
   const tol = n => formatTolerance(n) ? 'within 1' : 'exactly';
   return {
-    recipe: { mainPerDay, extraPerDay, feedPosts, days },
+    recipe: { mainPerDay, mainTotal: main, extraPerDay, feedPosts, days },
     mainReels: { slots: main, platforms: 'instagram, facebook, tiktok, youtube', format: fmt.length ? capAllocation(share(fmt, main, .15, { minN: 4 }), [...fmt].sort((a, b) => b.pBest - a.pBest), Math.ceil(main * .55)) : {} },
     extraReels: { slots: extra, platforms: 'tiktok, youtube', format: share(fmt, extra, .5) },
     feedPosts: { slots: feedPosts, platforms: 'instagram, facebook', format: share(board.postFormat, feedPosts, .35) },

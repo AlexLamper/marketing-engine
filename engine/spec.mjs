@@ -36,6 +36,11 @@ const PLATFORMS = P.platforms;
 // ---- experiment traits: every item says what it tests (see engine/experiments.mjs and P/plan.md)
 export const HOOKS = ['pijnpunt', 'waardebelofte', 'inzicht', 'verrassing', 'waar-begin-je', 'grondtekst', 'opluchting', 'vraag', 'herkenning'];
 export const TOPICS = ['boek', 'persoon', 'context', 'woord', 'thema', 'vers', 'app', 'praktisch'];
+// Hooks and topics for app projects without Bible content (project.json "bible" false); project.json
+// "hooks" / "topics" can narrow either list. The spec accepts every value, the experiments test the project's own.
+export const APP_HOOKS = ['pijnpunt', 'waardebelofte', 'verrassing', 'vraag', 'herkenning', 'pov', 'voor-na', 'opluchting'];
+export const APP_TOPICS = ['probleem', 'functie', 'resultaat', 'vergelijking', 'tip', 'verhaal', 'app', 'praktisch'];
+const ALL_HOOKS = [...new Set([...HOOKS, ...APP_HOOKS])], ALL_TOPICS = [...new Set([...TOPICS, ...APP_TOPICS])];
 export const STYLES = ['light', 'dark', 'photo'];
 export const MOODS = ['none', 'calm', 'hopeful', 'reflective', 'cinematic', 'warm', 'upbeat'];
 export const CAPTIONS = ['karaoke', 'block', 'none'];
@@ -52,8 +57,8 @@ const base = {
   experiment: z.object({
     feedType: z.enum(['video-first', 'spotlight', 'statement', 'carousel']).optional(),
     voice: z.enum(['male', 'female']).optional(),        // legacy (weeks before the voice library)
-    hook: z.enum(HOOKS).optional(),
-    topic: z.enum(TOPICS).optional(),
+    hook: z.enum(ALL_HOOKS).optional(),
+    topic: z.enum(ALL_TOPICS).optional(),
     note: z.string().max(200).optional(),
   }).default({}),
   basedOn: z.string().max(300),                          // the real fact, pain point or feature it rests on

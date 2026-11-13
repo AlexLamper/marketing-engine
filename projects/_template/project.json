@@ -30,5 +30,10 @@
     "web": "Ook op {{web}}"
   },
   "verse": { "translation": "SV", "eyebrow": "VERS VAN DE DAG" },
+  "bible": false,
+  "dailyVerse": false,
+  "planDays": 3,
+  "formatsAllowed": ["reel-demo", "reel-kinetic", "reel-list", "reel-explainer"],
+  "recipe": { "reelsPerDay": 1, "feedPosts": 0 },
   "notify": { "from": "{{name}} Studio <studio@{{web}}>" }
 }

@@ -5,8 +5,8 @@ Alex only approves. Today: **BijbelStudie** (on) and **BijbelQuiz** (scaffolded,
 
 ```
 Mornings    per project: Claude (planner/PLAN.md + projects/<id>/plan.md) reads results + brand
-            -> the specs of one day (the first day from tomorrow without content, at most 3 days
-            ahead), comment replies, on Mondays the week report
+            -> the specs of the next days without content (project.json planDays, default 3;
+            runs again when tomorrow is free), comment replies, on Mondays the week report
             validate -> import to the project's Mongo database -> render (Playwright + ffmpeg,
             voice via ElevenLabs/Google TTS) -> Vercel Blob -> "<Project>: Klaar om te keuren"
 Studio      pick a project, approve / comment / reject (comments -> "Aanpassingen naar Claude" -> Revise)
