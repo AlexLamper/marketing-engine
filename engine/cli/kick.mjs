@@ -9,7 +9,11 @@ import { db, close, STATUS } from '../db.mjs';
 import { project } from '../project.mjs';
 
 const d = await db(); const P = project();
-const { GITHUB_TOKEN, GITHUB_REPOSITORY } = process.env;
+const { GITHUB_REPOSITORY } = process.env;
+// Alex's own token (studio key GITHUB_DISPATCH_TOKEN) first: a run started with the workflow's GITHUB_TOKEN
+// counts as github-actions[bot], and on this public repo GitHub held every such Render run as "Action
+// required" (11-16 Nov 2026: no render ran). Runs started with his token run as him.
+const GITHUB_TOKEN = process.env.GITHUB_DISPATCH_TOKEN || process.env.GITHUB_TOKEN;
 
 async function dispatch(workflow) {
   if (!GITHUB_TOKEN || !GITHUB_REPOSITORY) return 'no GitHub token (not in Actions)';
@@ -70,6 +74,21 @@ if (fresh) {
     else { await d.collection('settings').updateOne({ _id: 'learn-kick' }, { $set: { at: new Date(), comments: fresh } }, { upsert: true }); console.log(`[${P.id}] learn started for ${fresh} comments`); }
   }
 }
-if (!waiting && !changes && !fresh) console.log(`[${P.id}] nothing to start`);
+// 4. quiz runs: keep the channel stocked (quizrun.yml also has its own schedule; this makes sure it runs)
+let quiz = 0;
+if (P.quizrun) {
+  const now = new Date();
+  const ahead = await d.collection('items').countDocuments({ kind: 'reel-quizrun', $or: [
+    { status: { $in: [STATUS.QUEUED, STATUS.RENDERING, STATUS.REVIEW] } }, { status: STATUS.FAILED, renderAttempts: { $not: { $gte: 3 } } },
+    { status: STATUS.APPROVED, $or: [{ postAt: null }, { postAt: { $gt: now } }] }] });
+  const target = (P.quizrun.perDay || 2) * (P.quizrun.daysAhead || 2);
+  const last = await d.collection('settings').findOne({ _id: 'quizrun-kick' });
+  if (ahead < target && (!last || Date.now() - new Date(last.at).getTime() > 3 * 3600e3)) {
+    const err = await dispatch('quizrun.yml');
+    if (err) problems.push(`quizrun: ${err}`);
+    else { quiz = 1; await d.collection('settings').updateOne({ _id: 'quizrun-kick' }, { $set: { at: new Date(), ahead } }, { upsert: true }); console.log(`[${P.id}] quiz runs started (${ahead}/${target} ahead)`); }
+  }
+}
+if (!waiting && !changes && !fresh && !quiz) console.log(`[${P.id}] nothing to start`);
 await close();
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
