@@ -15,7 +15,7 @@ import { youtubeConfigured, publishYouTube } from '../publish/youtube.mjs';
 import { tiktokConfigured, uploadPostConfigured, publishTikTok } from '../publish/tiktok.mjs';
 import { notify, studioLink } from '../notify.mjs';
 import { project } from '../project.mjs';
-import { openTimes, slotGroup, approvedAt, localDay, postPlatforms } from '../slots.mjs';
+import { openTimes, slotGroup, approvedAt, localDay, postPlatforms, projectTimes } from '../slots.mjs';
 
 const PUBLISHERS = {
   instagram: { ok: metaConfigured, run: publishInstagram, label: 'Instagram' },
@@ -31,7 +31,7 @@ const items = d.collection('items');
 const linked = await applyConnections();          // accounts linked in the studio
 // The pile: an open posting time takes the next approved item of its type that has no time yet.
 const tz = project().timezone || 'Europe/Amsterdam'; const now = new Date();
-const open = openTimes({ now, tz });
+const open = openTimes({ now, tz, extra: projectTimes(project()) });
 if (open.length) {
   // a time is taken per type: a feed post and a reel can both have 12:00
   const used = new Set((await items.find({ postAt: { $in: open.map(t => t.at) } }, { projection: { postAt: 1, kind: 1 } }).toArray()).map(o => `${slotGroup(o.kind)}@${+new Date(o.postAt)}`));

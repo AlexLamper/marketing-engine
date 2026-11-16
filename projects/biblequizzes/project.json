@@ -1,0 +1,120 @@
+{
+  "name": "Bible Quizzes",
+  "tagline": "Bible quizzes, alone or together",
+  "order": 3,
+  "enabled": true,
+  "db": "biblequizzes_marketing",
+  "envPrefix": "BIBLEQUIZZES_",
+  "web": "biblequizzes.app",
+  "links": {
+    "appStore": "",
+    "playStore": "",
+    "instagram": "",
+    "tiktok": "",
+    "youtube": ""
+  },
+  "language": "en",
+  "timezone": "Europe/Amsterdam",
+  "platforms": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube"
+  ],
+  "theme": {
+    "accent": "#35548C",
+    "accentDark": "#263E69",
+    "accentSoft": "#C9D4EC",
+    "accentFaint": "#EAEEF7",
+    "cta": "#35548C",
+    "panel": "#192942",
+    "ink": "#1B1A18",
+    "inkBody": "#3E3C37",
+    "inkMuted": "#6B6860",
+    "background": "#ECEAE4",
+    "surface": "#FFFFFF",
+    "line": "#DEDBD3",
+    "fontSans": "Nunito",
+    "fontSerif": "Fredoka"
+  },
+  "logos": {
+    "full": "logos/logo-full.svg",
+    "iconOnDark": "logos/logo-icon-dark.svg",
+    "wordmarkOnDark": "logos/logo-wordmark-white.svg"
+  },
+  "endCard": {
+    "headline": "Test your Bible knowledge.",
+    "sub": "",
+    "buttons": [
+      "Play free",
+      "Download free"
+    ],
+    "stores": [],
+    "web": "biblequizzes.app"
+  },
+  "verse": {
+    "translation": "SV",
+    "eyebrow": "VERS VAN DE DAG"
+  },
+  "notify": {
+    "from": "Bible Quizzes Studio <studio@biblequizzes.app>"
+  },
+  "fonts": [
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-500-Latin.woff2",
+      "weight": "500"
+    },
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-600-Latin.woff2",
+      "weight": "600"
+    },
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-700-Latin.woff2",
+      "weight": "700"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-600-Latin.woff2",
+      "weight": "600"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-700-Latin.woff2",
+      "weight": "700"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-800-Latin.woff2",
+      "weight": "800"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-900-Latin.woff2",
+      "weight": "900"
+    }
+  ],
+  "formatsAllowed": [
+    "reel-quizrun"
+  ],
+  "wordmark": [
+    "Bible ",
+    "Quizzes"
+  ],
+  "quizrun": {
+    "lang": "en",
+    "api": "https://biblequizzes.app/api/mobile/quizzes",
+    "perDay": 2,
+    "times": [
+      "14:30",
+      "21:30"
+    ],
+    "autoPublish": true,
+    "minQuizzes": 20,
+    "music": "upbeat",
+    "timer": 6
+  },
+  "planner": false
+}

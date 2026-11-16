@@ -1,0 +1,37 @@
+# Quiz runs (BijbelQuiz nl, Bible Quizzes en, ...): three times a day, for every project with "quizrun" in
+# project.json, make the quiz videos that are missing (about two days ahead), render them and put them on
+# the pile by themselves (quizrun.autoPublish - Alex, 16 Nov 2026: he never reviews these). The Publish
+# workflow posts them at the project's quizrun.times. No Claude, no voice: questions come from the platform.
+# A channel whose platform has too few quizzes (Bible Quizzes until biblequizzes.app has its English
+# quizzes) or no linked account yet makes nothing and waits. Schedule saved by AlexLamper (runs as him).
+name: Quiz runs
+on:
+  schedule:
+    - cron: '23 4,10,16 * * *'
+  workflow_dispatch:
+    inputs:
+      project: { description: 'Only this project (empty = every enabled project)', required: false, default: '' }
+      force: { description: 'Make videos even when no account is linked yet (to look at)', type: boolean, default: false }
+concurrency: { group: quizrun, cancel-in-progress: false }
+permissions: { contents: read, issues: write }
+defaults: { run: { shell: bash } }
+jobs:
+  make:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      SECRETS: ${{ toJSON(secrets) }}
+      GITHUB_TOKEN: ${{ github.token }}
+      PROJECT: ${{ inputs.project }}
+      RENDER_KINDS: reel-quizrun
+      RENDER_MINUTES: '100'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-engine
+        with: { render: 'true' }
+      - name: Make the missing quiz videos
+        run: node engine/cli/each.mjs engine/cli/quizrun-make.mjs ${{ inputs.force && '--force' || '' }} 2>&1 | tee -a run.log
+      - name: Render them (they go on the pile by themselves)
+        run: node engine/cli/each.mjs engine/cli/render-pending.mjs 2>&1 | tee -a run.log
+      - if: failure()
+        uses: ./.github/actions/report-failure

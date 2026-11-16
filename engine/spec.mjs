@@ -299,6 +299,33 @@ export const PostStatement = z.object({
   line: z.string().min(8).max(110), sub: z.string().max(90).optional(),
 });
 
+// "How many of these 10 do you know?" - a run of real questions from the quiz platform (engine/quizrun/),
+// a timer per question, the answer list filling up, cheers in between and a score call at the end. No voice,
+// no model writes it: every question, answer and string comes from the platform and engine/quizrun/locales.mjs.
+export const QUIZRUN_LEVELS = ['easy', 'medium', 'hard', 'expert'];
+export const ReelQuizrun = z.object({
+  ...base, kind: z.literal('reel-quizrun'),
+  music: z.enum(MOODS).optional(),
+  lang: z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/),
+  title: z.object({ pre: z.string().min(1).max(30), hi: z.string().min(1).max(30) }),   // "HOE GOED KEN JIJ" + "DE BIJBEL?"
+  timer: z.number().min(2).max(9).default(6),          // seconds to think per question
+  questions: z.array(z.object({
+    qid: z.string().max(80),                             // platform question id (no repeats per channel)
+    text: z.string().min(5).max(140),
+    ref: z.string().max(40).optional(),                  // shown as the chip, e.g. "GENESIS 1"
+    answers: z.array(z.string().min(1).max(60)).min(2).max(4),
+    correct: z.number().int().min(0).max(3),
+    level: z.enum(QUIZRUN_LEVELS),
+    label: z.string().min(1).max(40),                    // what goes in the answer list once revealed
+  })).min(5).max(10),
+  ui: z.object({                                         // every word on screen, in the channel's language
+    levels: z.record(z.enum(QUIZRUN_LEVELS), z.string().max(16)),
+    cheers: z.array(z.object({ after: z.number().int().min(1).max(9), title: z.string().max(40), sub: z.string().max(60), button: z.string().max(24), icon: z.enum(['follow', 'like', 'comment']) })).max(3),
+    score: z.object({ title: z.string().max(40), sub: z.string().max(60) }),
+    end: z.object({ headline: z.string().max(60), button: z.string().max(24), web: z.string().max(40), stores: z.boolean() }),
+  }),
+}).refine(s => s.questions.every(q => q.correct < q.answers.length), { message: 'correct must point to one of the answers', path: ['questions'] });
+
 // Instagram/Facebook carousel, 1080x1350 slides. A CTA slide (end card) is added at the end.
 const slide = z.discriminatedUnion('type', [
   z.object({ type: z.literal('cover'), title: z.string().min(2).max(90), sub: z.string().max(110).optional(), photo: photo.optional() }),
@@ -315,9 +342,9 @@ export const Carousel = z.object({
 }).refine(s => s.slides[0].type === 'cover', { message: 'the first slide must be type "cover" (the hook)', path: ['slides', 0] })
   .refine(s => s.platforms.every(p => p === 'instagram' || p === 'facebook'), { message: 'carousels go to instagram and facebook only', path: ['platforms'] });
 
-export const Spec = z.union([VerseStill, ReelVerse, ReelDemo, ReelExplainer, ReelKinetic, ReelQuiz, ReelList, ReelStory, ReelScene, ReelVraag, PostSpotlight, PostStatement, Carousel]);
+export const Spec = z.union([VerseStill, ReelVerse, ReelDemo, ReelExplainer, ReelKinetic, ReelQuiz, ReelList, ReelStory, ReelScene, ReelVraag, ReelQuizrun, PostSpotlight, PostStatement, Carousel]);
 const SCHEMAS = { 'verse-still': VerseStill, 'reel-verse': ReelVerse, 'reel-demo': ReelDemo, 'reel-explainer': ReelExplainer, 'reel-kinetic': ReelKinetic,
-  'reel-quiz': ReelQuiz, 'reel-list': ReelList, 'reel-story': ReelStory, 'reel-3d': ReelScene, 'reel-vraag': ReelVraag, 'post-spotlight': PostSpotlight, 'post-statement': PostStatement, carousel: Carousel };
+  'reel-quiz': ReelQuiz, 'reel-list': ReelList, 'reel-story': ReelStory, 'reel-3d': ReelScene, 'reel-vraag': ReelVraag, 'reel-quizrun': ReelQuizrun, 'post-spotlight': PostSpotlight, 'post-statement': PostStatement, carousel: Carousel };
 export const KINDS = Object.keys(SCHEMAS);
 export const REEL_KINDS = KINDS.filter(k => k.startsWith('reel-'));
 export const isVideo = kind => kind.startsWith('reel-');

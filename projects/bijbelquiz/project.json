@@ -2,7 +2,7 @@
   "name": "BijbelQuiz",
   "tagline": "Bijbelquizzen, alleen of samen",
   "order": 2,
-  "enabled": false,
+  "enabled": true,
   "db": "bijbelquiz_marketing",
   "envPrefix": "BIJBELQUIZ_",
   "web": "bijbelquiz.com",
@@ -15,20 +15,20 @@
     "youtube"
   ],
   "theme": {
-    "accent": "#35548c",
-    "accentDark": "#29426d",
-    "accentSoft": "#d7dde8",
-    "accentFaint": "#f3f5f8",
-    "cta": "#2a4373",
+    "accent": "#35548C",
+    "accentDark": "#263E69",
+    "accentSoft": "#C9D4EC",
+    "accentFaint": "#EAEEF7",
+    "cta": "#35548C",
     "panel": "#192942",
-    "ink": "#111827",
-    "inkBody": "#374151",
-    "inkMuted": "#6b7280",
-    "background": "#f3f4f6",
-    "surface": "#ffffff",
-    "line": "#e5e7eb",
-    "fontSans": "Inter",
-    "fontSerif": "Lora"
+    "ink": "#1B1A18",
+    "inkBody": "#3E3C37",
+    "inkMuted": "#6B6860",
+    "background": "#ECEAE4",
+    "surface": "#FFFFFF",
+    "line": "#DEDBD3",
+    "fontSans": "Nunito",
+    "fontSerif": "Fredoka"
   },
   "logos": {
     "full": "logos/logo-full.svg",
@@ -54,5 +54,63 @@
   },
   "notify": {
     "from": "BijbelQuiz Studio <studio@bijbelquiz.com>"
-  }
+  },
+  "wordmark": [
+    "Bijbel",
+    "Quiz"
+  ],
+  "fonts": [
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-500-Latin.woff2",
+      "weight": "500"
+    },
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-600-Latin.woff2",
+      "weight": "600"
+    },
+    {
+      "family": "Fredoka",
+      "file": "fonts/Fredoka-700-Latin.woff2",
+      "weight": "700"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-600-Latin.woff2",
+      "weight": "600"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-700-Latin.woff2",
+      "weight": "700"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-800-Latin.woff2",
+      "weight": "800"
+    },
+    {
+      "family": "Nunito",
+      "file": "fonts/Nunito-900-Latin.woff2",
+      "weight": "900"
+    }
+  ],
+  "quizrun": {
+    "lang": "nl",
+    "api": "https://www.bijbelquiz.com/api/mobile/quizzes",
+    "perDay": 2,
+    "times": [
+      "12:30",
+      "19:30"
+    ],
+    "autoPublish": true,
+    "minQuizzes": 20,
+    "music": "upbeat",
+    "timer": 6
+  },
+  "formatsAllowed": [
+    "reel-quizrun"
+  ],
+  "planner": false
 }

@@ -26,6 +26,7 @@ export const WINDOW_MIN = 180;
 
 export function slotGroup(kind) {
   if (kind === 'verse-still') return 'verse';
+  if (kind === 'reel-quizrun') return 'quizrun';   // quiz-run projects post on their own times (project.json quizrun.times)
   if (kind.startsWith('reel-')) return 'reel';
   return 'feed';
 }
@@ -89,10 +90,13 @@ export function localDay(at, tz) {
   return `${WEEKDAY[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} ${MONTH[m - 1]}`;
 }
 
+/** A project's own posting times on top of the shared ones: { quizrun: ['12:30', '19:30'] }. */
+export const projectTimes = p => (p.quizrun?.times?.length ? { quizrun: p.quizrun.times } : {});
+
 /** Posting times that are open now: today's times from `at` until WINDOW_MIN minutes later. [{ group, time, at, iso, week }] */
-export function openTimes({ now = new Date(), tz = 'Europe/Amsterdam' } = {}) {
+export function openTimes({ now = new Date(), tz = 'Europe/Amsterdam', extra = {} } = {}) {
   const today = localDate(now, tz); const out = [];
-  for (const [group, times] of Object.entries(POSTING_TIMES)) for (const time of times) {
+  for (const [group, times] of Object.entries({ ...POSTING_TIMES, ...extra })) for (const time of times) {
     const at = zonedTime(today, time, tz);
     if (at.getTime() <= now.getTime() && now.getTime() < at.getTime() + WINDOW_MIN * 60e3) out.push({ group, time, at, iso: isoWithOffset(at, tz), week: isoWeekOf(today) });
   }

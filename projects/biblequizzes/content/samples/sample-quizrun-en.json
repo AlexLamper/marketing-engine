@@ -1,0 +1,202 @@
+{
+  "id": "sample-quizrun-en",
+  "week": "2026-W47",
+  "slot": "2026-11-16T14:30:00+01:00",
+  "kind": "reel-quizrun",
+  "lang": "en",
+  "platforms": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube"
+  ],
+  "caption": "How many of these 10 Bible questions can you answer? From easy to expert.\n\nDrop your score in the comments and challenge a friend!\n\nNew Bible quizzes every day, free at biblequizzes.app.",
+  "hashtags": [
+    "#biblequiz",
+    "#bible",
+    "#quiz",
+    "#bibletrivia",
+    "#christian",
+    "#faith"
+  ],
+  "basedOn": "Echte vragen uit biblequizzes.app: genesis-bible-quiz-part-1, genesis-bible-quiz-part-2, genesis-bible-quiz-part-3, exodus-bible-quiz-part-14, matthew-bible-quiz-part-5, john-bible-quiz-part-3",
+  "subject": "Quiz: mixed",
+  "experiment": {
+    "note": "quizrun theme=mixed"
+  },
+  "music": "upbeat",
+  "title": {
+    "pre": "How well do you",
+    "hi": "know the Bible?"
+  },
+  "timer": 6,
+  "questions": [
+    {
+      "qid": "3-0",
+      "text": "What did God create on the first day?",
+      "ref": "Genesis 1",
+      "answers": [
+        "Light",
+        "Dry land",
+        "The sky",
+        "The sun and the moon"
+      ],
+      "correct": 0,
+      "level": "easy",
+      "label": "Light"
+    },
+    {
+      "qid": "4-9",
+      "text": "How did God make the woman?",
+      "ref": "Genesis 2",
+      "answers": [
+        "From one of the man's ribs",
+        "From a breath of wind",
+        "From the dust of the ground",
+        "From the water of the river"
+      ],
+      "correct": 0,
+      "level": "easy",
+      "label": "From one of the man's ribs"
+    },
+    {
+      "qid": "5-0",
+      "text": "Which creature spoke to the woman in the garden?",
+      "ref": "Genesis 3",
+      "answers": [
+        "The serpent",
+        "A raven of the valley",
+        "A lion of the field",
+        "A dove of the air"
+      ],
+      "correct": 0,
+      "level": "easy",
+      "label": "The serpent"
+    },
+    {
+      "qid": "1-5",
+      "text": "Where did the pillar of cloud go during the night?",
+      "ref": "Exodus 14",
+      "answers": [
+        "Behind Israel, facing Egypt",
+        "Out over the water of the sea",
+        "Far ahead of the whole camp",
+        "Back to the mountain of God"
+      ],
+      "correct": 0,
+      "level": "medium",
+      "label": "Behind Israel, facing Egypt"
+    },
+    {
+      "qid": "9-2",
+      "text": "\"Blessed are the meek, for they will...\"",
+      "ref": "Matthew 5",
+      "answers": [
+        "Be filled with good things",
+        "Be called children of God",
+        "Inherit the earth",
+        "See God face to face"
+      ],
+      "correct": 2,
+      "level": "medium",
+      "label": "Inherit the earth"
+    },
+    {
+      "qid": "7-1",
+      "text": "When did Nicodemus come to Jesus?",
+      "ref": "John 3",
+      "answers": [
+        "At noon",
+        "At sunrise",
+        "At the feast of Passover",
+        "By night"
+      ],
+      "correct": 3,
+      "level": "medium",
+      "label": "By night"
+    },
+    {
+      "qid": "6-3",
+      "text": "How long had Lazarus been in the tomb when Jesus arrived?",
+      "ref": "John 11",
+      "answers": [
+        "Three days",
+        "Seven days",
+        "One day",
+        "Four days"
+      ],
+      "correct": 3,
+      "level": "hard",
+      "label": "Four days"
+    },
+    {
+      "qid": "2-0",
+      "text": "Where did God speak the Ten Commandments to Israel?",
+      "ref": "Exodus 20",
+      "answers": [
+        "From the Red Sea",
+        "From the tabernacle",
+        "From Mount Sinai",
+        "From the burning bush"
+      ],
+      "correct": 2,
+      "level": "hard",
+      "label": "From Mount Sinai"
+    },
+    {
+      "qid": "0-0",
+      "text": "Who was king when Daniel was thrown into the lions' den?",
+      "ref": "Daniel 6",
+      "answers": [
+        "Belshazzar",
+        "Cyrus",
+        "Darius",
+        "Nebuchadnezzar"
+      ],
+      "correct": 2,
+      "level": "hard",
+      "label": "Darius"
+    },
+    {
+      "qid": "8-7",
+      "text": "Who took the child Jesus in his arms in the temple and blessed God?",
+      "ref": "Luke 2",
+      "answers": [
+        "Simeon",
+        "Eli",
+        "Nicodemus",
+        "Zechariah"
+      ],
+      "correct": 0,
+      "level": "expert",
+      "label": "Simeon"
+    }
+  ],
+  "ui": {
+    "levels": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "expert": "Expert"
+    },
+    "cheers": [
+      {
+        "after": 5,
+        "title": "All 5 right?",
+        "sub": "Follow for a quiz every day",
+        "button": "Follow",
+        "icon": "follow"
+      }
+    ],
+    "score": {
+      "title": "What was your score?",
+      "sub": "Tell us in the comments"
+    },
+    "end": {
+      "headline": "Play new Bible quizzes every day",
+      "button": "Play free",
+      "web": "biblequizzes.app",
+      "stores": false
+    }
+  }
+}

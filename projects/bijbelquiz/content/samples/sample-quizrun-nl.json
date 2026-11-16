@@ -1,0 +1,202 @@
+{
+  "id": "sample-quizrun-nl",
+  "week": "2026-W47",
+  "slot": "2026-11-16T12:54:54+01:00",
+  "kind": "reel-quizrun",
+  "lang": "nl",
+  "platforms": [
+    "instagram",
+    "facebook",
+    "tiktok",
+    "youtube"
+  ],
+  "caption": "Hoeveel van deze 10 bijbelvragen weet jij? Van makkelijk tot expert.\n\nZet je score in de reacties en daag een vriend uit!\n\nSpeel elke dag nieuwe bijbelquizzen, gratis op bijbelquiz.com of in de BijbelQuiz-app.",
+  "hashtags": [
+    "#bijbelquiz",
+    "#bijbel",
+    "#quiz",
+    "#bijbelkennis",
+    "#christelijk",
+    "#geloof"
+  ],
+  "basedOn": "Echte vragen uit bijbelquiz.com: handelingen-bijbelquiz-deel-1, lucas-bijbelquiz-deel-2, lucas-bijbelquiz-deel-10, daniel-bijbelquiz-deel-3, johannes-bijbelquiz-deel-6, richteren-bijbelquiz-deel-7",
+  "subject": "Quiz: mixed",
+  "experiment": {
+    "note": "quizrun theme=mixed"
+  },
+  "music": "upbeat",
+  "title": {
+    "pre": "Hoe goed ken jij",
+    "hi": "de Bijbel?"
+  },
+  "timer": 6,
+  "questions": [
+    {
+      "qid": "6a99d095cf68bd5e01a87994",
+      "text": "Hoeveel personen waren er bijeen toen Petrus opstond om te spreken?",
+      "ref": "Handelingen 1",
+      "answers": [
+        "Ongeveer honderdtwintig",
+        "Ongeveer vijfhonderd",
+        "Ongeveer drieduizend",
+        "Precies twaalf"
+      ],
+      "correct": 0,
+      "level": "easy",
+      "label": "Ongeveer honderdtwintig"
+    },
+    {
+      "qid": "6ab45115f5fcee71616ad2fb",
+      "text": "Welke keizer vaardigde het gebod uit dat de hele wereld beschreven moest worden?",
+      "ref": "Lucas 2",
+      "answers": [
+        "Claudius",
+        "Nero",
+        "Augustus",
+        "Tiberius"
+      ],
+      "correct": 2,
+      "level": "easy",
+      "label": "Augustus"
+    },
+    {
+      "qid": "6ab45115f5fcee71616ad66b",
+      "text": "Met welk beeld beschreef Jezus hoe Hij de zeventig uitzond?",
+      "ref": "Lucas 10",
+      "answers": [
+        "Als vissers van mensen",
+        "Als lammeren te midden van wolven",
+        "Als schapen die geen herder hebben",
+        "Als het zout van de aarde"
+      ],
+      "correct": 1,
+      "level": "easy",
+      "label": "Als lammeren te midden van wolven"
+    },
+    {
+      "qid": "6ab52862163b3b3698e355df",
+      "text": "Wie brachten de aanklacht tegen de Joodse mannen bij de koning?",
+      "ref": "Daniël 3",
+      "answers": [
+        "De wijzen uit Juda",
+        "De priesters van Bel",
+        "Chaldeeuwse mannen",
+        "De stadhouders van de Meden"
+      ],
+      "correct": 2,
+      "level": "medium",
+      "label": "Chaldeeuwse mannen"
+    },
+    {
+      "qid": "6ab45114f5fcee71616acbe9",
+      "text": "Hoeveel bleef er van het brood over nadat iedereen genoeg gegeten had?",
+      "ref": "Johannes 6",
+      "answers": [
+        "Twaalf korven vol",
+        "Vijf korven vol",
+        "Twee korven vol",
+        "Zeven manden vol"
+      ],
+      "correct": 0,
+      "level": "medium",
+      "label": "Twaalf korven vol"
+    },
+    {
+      "qid": "6ab107206a66c93921b8249e",
+      "text": "Hoeveel man bleven over nadat wie bang en bevreesd was naar huis mocht gaan?",
+      "ref": "Richteren 7",
+      "answers": [
+        "Tweeëntwintigduizend man",
+        "Driehonderd man",
+        "Vijfduizend man",
+        "Tienduizend man"
+      ],
+      "correct": 3,
+      "level": "medium",
+      "label": "Tienduizend man"
+    },
+    {
+      "qid": "6ab45117f5fcee71616ae5ed",
+      "text": "Van welke gewassen gaven de Schriftgeleerden en Farizeeën trouw tienden, terwijl zij het zwaarste van de wet nalieten?",
+      "ref": "Matteüs 23",
+      "answers": [
+        "Van vijgen, olijven en druiven",
+        "Van tarwe, gerst en spelt",
+        "Van mirre, aloë en wierook",
+        "Van munt, dille en komijn"
+      ],
+      "correct": 3,
+      "level": "hard",
+      "label": "Van munt, dille en komijn"
+    },
+    {
+      "qid": "6ab45116f5fcee71616adad5",
+      "text": "Bij welke gebeurtenis heeft Mozes volgens Jezus laten zien dat de doden opgewekt worden?",
+      "ref": "Lucas 20",
+      "answers": [
+        "Bij het doornenbos",
+        "Bij de berg Sinaï",
+        "Bij de Rode Zee",
+        "Bij de koperen slang"
+      ],
+      "correct": 0,
+      "level": "hard",
+      "label": "Bij het doornenbos"
+    },
+    {
+      "qid": "6aac6550cc81e4e3dbdf4c50",
+      "text": "Van wie wordt Sem in Genesis 10:21 de vader genoemd?",
+      "ref": "Genesis 10",
+      "answers": [
+        "Alle zonen van Cham",
+        "Alle koningen van Kanaän",
+        "Alle zonen van Jafeth",
+        "Alle zonen van Heber"
+      ],
+      "correct": 3,
+      "level": "hard",
+      "label": "Alle zonen van Heber"
+    },
+    {
+      "qid": "6ab50f1e7026c4d258e2c2a2",
+      "text": "Na hoeveel jaar beloofde de HEERE de ballingen te bezoeken en terug te brengen naar hun land?",
+      "ref": "Jeremia 29",
+      "answers": [
+        "Zeventig jaar",
+        "Twee jaar",
+        "Zeven jaar",
+        "Veertig jaar"
+      ],
+      "correct": 0,
+      "level": "expert",
+      "label": "Zeventig jaar"
+    }
+  ],
+  "ui": {
+    "levels": {
+      "easy": "Makkelijk",
+      "medium": "Gemiddeld",
+      "hard": "Moeilijk",
+      "expert": "Expert"
+    },
+    "cheers": [
+      {
+        "after": 5,
+        "title": "Alle 5 goed?",
+        "sub": "Volg voor elke dag een quiz",
+        "button": "Volgen",
+        "icon": "follow"
+      }
+    ],
+    "score": {
+      "title": "Hoeveel had jij goed?",
+      "sub": "Zet je score in de reacties"
+    },
+    "end": {
+      "headline": "Speel elke dag nieuwe bijbelquizzen",
+      "button": "Speel gratis",
+      "web": "bijbelquiz.com",
+      "stores": true
+    }
+  }
+}

@@ -236,6 +236,7 @@ const T = {};
 <script src="templates/story.js"></script>
 <script src="templates/film2d.js"></script>
 <script src="templates/vraag.js"></script>
+<script src="templates/quizrun.js"></script>
 <script type="importmap">{ "imports": { "three": "../../node_modules/three/build/three.module.js", "three/addons/": "../../node_modules/three/examples/jsm/" } }</script>
 <script type="module" src="templates/scene3d.js"></script>
 <script type="module" src="templates/vraag3d.js"></script>
@@ -262,7 +263,7 @@ window.setup = async (spec, timing, context) => {
   await document.fonts.ready;
   await Promise.all([...document.images].map(i => i.decode().catch(() => { throw new Error('Image failed: ' + i.src); })));
   current.render(current.duration ? current.duration - .05 : 0);
-  return { width: current.width, height: current.height, duration: current.duration, starts: current.starts || null, slides: current.slides || 0, fps: current.fps || null };
+  return { width: current.width, height: current.height, duration: current.duration, starts: current.starts || null, sfx: current.sfx || null, slides: current.slides || 0, fps: current.fps || null };
 };
 /** Carousels: show slide i (0-based) for the screenshot. */
 window.slide = i => current.showSlide(i);

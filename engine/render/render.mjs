@@ -39,7 +39,7 @@ export function stageContext(p = project()) {
     fonts: (p.fonts || []).map(f => ({ ...f, url: need(f.file, `font ${f.file}`) })),
     photoBase: url(PHOTO_DIR) + '/', photoCount: PHOTO_COUNT, shotBase: url(p.paths.screenshots) + '/', shots,
     endCard: { headline: p.endCard.headline, sub: p.endCard.sub, button: p.endCard.buttons[0], web: p.endCard.web },
-    verse: p.verse, name: p.name, web: p.web,
+    verse: p.verse, name: p.name, web: p.web, wordmark: p.wordmark || null,
     places: data('places.json')?.places || {}, map: data('map.json'),
   };
 }
@@ -277,8 +277,9 @@ export function musicBody(file) {
   if (r.b - r.a < 10) { r.a = 0; r.b = len; }
   bodies.set(file, r); return r;
 }
-function mixAudio({ clips = [], starts, music, duration, work }) {
-  if (!clips.length && !music) return null;
+function mixAudio({ clips = [], starts, music, duration, work, sfx = [] }) {
+  if (!clips.length && !music && !sfx?.length) return null;
+  if (sfx?.length) return mixWithSfx({ clips, starts, music, duration, work, sfx });
   const args = ['-loglevel', 'error', '-y']; const f = []; let n = 0;
   clips.forEach(c => { args.push('-i', c.f); n++; });
   if (clips.length) {
@@ -308,6 +309,30 @@ function mixAudio({ clips = [], starts, music, duration, work }) {
   return file;
 }
 export { mixAudio };
+
+// Sound effects (templates that return sfx: [{ t, name, gain }], files in assets/sfx/<name>.wav): the bed
+// (voice + music, mixed as usual) with every effect laid on top at its time. Effects of the same name are
+// mixed in one input each, so a reel with 60 ticks stays a small filter graph.
+export const SFX_DIR = join(HERE, '..', '..', 'assets', 'sfx');
+function mixWithSfx({ clips, starts, music, duration, work, sfx }) {
+  const bed = (clips.length || music) ? mixAudio({ clips, starts, music, duration, work }) : null;
+  const byName = {};
+  for (const e of sfx) { if (e.t >= duration || !existsSync(join(SFX_DIR, `${e.name}.wav`))) continue; (byName[e.name] ||= []).push(e); }
+  const args = ['-loglevel', 'error', '-y']; const f = []; const labels = []; let n = 0;
+  if (bed) { args.push('-i', bed); f.push(`[0:a]aresample=44100,aformat=channel_layouts=stereo,volume=0.55[bed]`); labels.push('[bed]'); n++; }
+  for (const [name, list] of Object.entries(byName)) {
+    args.push('-i', join(SFX_DIR, `${name}.wav`));
+    const outs = list.map((_, i) => `[${name.replace(/\W/g, '')}${i}]`);
+    f.push(`[${n}:a]aresample=44100,aformat=channel_layouts=stereo,asplit=${list.length}${outs.join('')}`);
+    const delayed = list.map((e, i) => { const d = Math.max(0, Math.round(e.t * 1000)); const l = `[${name.replace(/\W/g, '')}d${i}]`; f.push(`${outs[i]}adelay=${d}|${d},volume=${(e.gain ?? 1).toFixed(2)}${l}`); return l; });
+    const mixed = `[${name.replace(/\W/g, '')}mix]`;
+    f.push(`${delayed.join('')}amix=inputs=${delayed.length}:normalize=0:duration=longest${mixed}`); labels.push(mixed); n++;
+  }
+  f.push(`${labels.join('')}amix=inputs=${labels.length}:normalize=0:duration=longest,apad=whole_dur=${duration.toFixed(2)},alimiter=limit=0.89,loudnorm=I=-14:TP=-1.5:LRA=11[out]`);
+  const file = join(work, 'sound-fx.m4a');
+  execFileSync('ffmpeg', [...args, '-filter_complex', f.join(';'), '-map', '[out]', '-t', duration.toFixed(3), '-ar', '44100', '-c:a', 'aac', '-b:a', '160k', file]);
+  return file;
+}
 
 export async function renderSpec(raw, { outDir = join(OUT, project().id), browser: shared, say } = {}) {   // say: a cached synthesize (render-pending)
   const spec = await prepare(raw);
@@ -360,7 +385,7 @@ export async function renderSpec(raw, { outDir = join(OUT, project().id), browse
       for (const pg of pages.slice(1)) await pg.close();
       const music = musicFor(spec.music, spec.id);
       if (spec.music && spec.music !== 'none' && !music) result.notes.push(`Nog geen muziek voor "${spec.music}" in de bibliotheek - gemaakt zonder muziek`);
-      const sound = mixAudio({ clips: voice?.clips, starts: info.starts, music, duration: info.duration, work });
+      const sound = mixAudio({ clips: voice?.clips, starts: info.starts, music, duration: info.duration, work, sfx: info.sfx || [] });
       const media = join(dir, `${spec.id}.mp4`);
       const audio = sound ? ['-i', sound] : ['-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100'];
       execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-framerate', String(fps), '-i', join(work, 'f%05d.jpg'), ...audio,

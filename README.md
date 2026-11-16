@@ -1,7 +1,7 @@
 # Marketing engine + studio
 
 Plans, makes, publishes and measures social content for any number of products (projects).
-Alex only approves. Today: **BijbelStudie** (on) and **BijbelQuiz** (scaffolded, off).
+Alex only approves. Today: **BijbelStudie** (on), **BijbelQuiz** (on: Dutch quiz-run videos, made and posted by themselves, 2 a day) and **Bible Quizzes** (English quiz runs; start by themselves once biblequizzes.app has its quizzes).
 
 ```
 Mornings    per project: Claude (planner/PLAN.md + projects/<id>/plan.md) reads results + brand
@@ -10,6 +10,8 @@ Mornings    per project: Claude (planner/PLAN.md + projects/<id>/plan.md) reads 
             validate -> import to the project's Mongo database -> render (Playwright + ffmpeg,
             voice via ElevenLabs/Google TTS) -> Vercel Blob -> "<Project>: Klaar om te keuren"
 Studio      pick a project, approve / comment / reject (comments -> "Aanpassingen naar Claude" -> Revise)
+Quiz runs   3x a day per quiz project: 10 real questions from the platform -> video -> straight onto the pile
+            (no review, no Claude, no voice) - engine/quizrun/, .github/workflows/quizrun.yml
 Every 30m   approved items whose time has come -> Instagram, Facebook, YouTube Shorts, TikTok
             (approving puts an item on the pile; every posting time takes the next one of its type)
 Daily       metrics, followers, new users, new comments; competitors on Mondays; rejected items

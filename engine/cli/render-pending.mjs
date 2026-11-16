@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { db, close, STATUS, heartbeat } from '../db.mjs';
 import { notify, studioLink } from '../notify.mjs';
 import { project } from '../project.mjs';
+import { postPlatforms } from '../slots.mjs';
 
 const d = await db(); const items = d.collection('items');
 await (await import('../library.mjs')).loadVoices(d);     // voice test set for tts
@@ -29,7 +30,9 @@ const stopAt = Date.now() + Number(process.env.RENDER_MINUTES || 140) * 60e3;
 // A map story takes long (about 3 s a frame, 60-90 min): with less time left a job takes other items first,
 // so it is not cut off halfway (the next run takes the story).
 const LONG = { 'reel-story': 95 };
-const claimable = () => { const left = (stopAt - Date.now()) / 60e3 + 20; const skip = Object.entries(LONG).filter(([, m]) => left < m).map(([k]) => k);
+// RENDER_KINDS=reel-quizrun (quizrun.yml): only those kinds, so a quick quiz job never picks up a long story.
+const KINDS = (process.env.RENDER_KINDS || '').split(',').map(s => s.trim()).filter(Boolean);
+const claimable = () => { if (KINDS.length) return { $and: [WAITING(), { kind: { $in: KINDS } }] }; const left = (stopAt - Date.now()) / 60e3 + 20; const skip = Object.entries(LONG).filter(([, m]) => left < m).map(([k]) => k);
   return skip.length ? { $and: [WAITING(), { kind: { $nin: skip } }] } : WAITING(); };
 // 25 Oct: a long render run on older code claimed the videos the Engine fix had just queued (watermark, calmer
 // pace) and made them without the fix; the run the fix started then found nothing. So before every claim a job
@@ -52,7 +55,7 @@ function codeIsStale() {
 }
 // Storage first: when media cannot be stored (24 Oct: the Blob store was suspended over its limit), rendering
 // would only throw the work away. Then nothing is claimed, the items stay queued, and the run fails visibly.
-if (await items.countDocuments(WAITING())) {
+if (await items.countDocuments(KINDS.length ? { $and: [WAITING(), { kind: { $in: KINDS } }] } : WAITING())) {
   try { const f = join(tmpdir(), `probe-${Date.now()}.txt`); writeFileSync(f, 'probe'); await remove([await upload(f, `${project().id}/probe/${Date.now()}.txt`)]); }
   catch (e) {
     console.error(`[${project().id}] media storage does not work (${e.message}) - nothing rendered, the items stay queued`);
@@ -90,8 +93,12 @@ for (let it = codeIsStale() ? null : await claim(); it; it = Date.now() < stopAt
     const media = { url: await upload(r.files.media, `${key}-${r.files.media.split('/').pop()}`), duration: r.duration };
     if (r.files.slides) { media.slides = [media.url]; for (const f of r.files.slides.slice(1)) media.slides.push(await upload(f, `${key}-${f.split('/').pop()}`)); }
     if (r.files.cover) media.coverUrl = await upload(r.files.cover, `${key}-cover.jpg`);
-    await items.updateOne({ _id: it._id }, { $set: { status: STATUS.REVIEW, media, renderNotes: r.notes, renderedAt: new Date(), renderAttempts: 0 }, $unset: { error: '' },
-      $push: { history: { at: new Date(), event: 'rendered' } } });
+    // Quiz runs of a project with quizrun.autoPublish (Alex, 16 Nov 2026: "I don't want to ever check the
+    // videos myself") go straight onto the pile: made from the platform's own questions, nothing to review.
+    const auto = it.kind === 'reel-quizrun' && project().quizrun?.autoPublish === true;
+    const done = auto ? { status: STATUS.APPROVED, approvedAt: new Date(), 'spec.platforms': postPlatforms(it.kind, project().platforms) } : { status: STATUS.REVIEW };
+    await items.updateOne({ _id: it._id }, { $set: { ...done, media, renderNotes: r.notes, renderedAt: new Date(), renderAttempts: 0 }, $unset: { error: '' },
+      $push: { history: { $each: [{ at: new Date(), event: 'rendered' }, ...(auto ? [{ at: new Date(), event: 'auto-approve', note: 'quiz run: automatisch op de stapel' }] : [])] } } });
     ok++;
   } catch (e) {
     console.error(`${it._id}: ${e.message}`);
