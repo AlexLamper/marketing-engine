@@ -30,6 +30,8 @@ Vorm: `- Regel. (Alex, <datum>: "<zijn woorden>"; <item>)`
 
 ## Plaatsen
 
+- Geen TikTok voor BijbelQuiz: alleen Instagram, Facebook en YouTube (`project.json` platforms). (Alex, 18 nov: TikTok overslaan)
+
 ## Nog op te lossen in de engine
 
 Feedback die geen spec kan oplossen (templates, geluid, beweging). De planner zet het hier en Alex krijgt
